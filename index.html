@@ -70,16 +70,6 @@
   .nav-cta:hover { background: var(--accent); }
 
   /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8rem 2rem 5rem;
-    max-width: 780px;
-    margin: 0 auto;
-    position: relative;
-  }
   .hero-eyebrow {
     font-size: 0.75rem;
     font-weight: 500;
@@ -163,18 +153,92 @@
   }
   .hero-trust svg { flex-shrink: 0; }
 
+  /* BACKGROUND IMAGE SECTIONS */
+  .bg-section-window {
+    background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80&fit=crop') center/cover no-repeat;
+    position: relative;
+  }
+  .bg-section-window::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(245,240,232,0.93);
+  }
+  .bg-section-window .container { position: relative; z-index: 1; }
+
+  .bg-section-dark-texture {
+    background: url('https://images.unsplash.com/photo-1557683316-973673baf926?w=1600&q=80&fit=crop') center/cover no-repeat;
+    position: relative;
+  }
+  .bg-section-dark-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(20,16,14,0.88);
+  }
+  .bg-section-dark-texture .container,
+  .bg-section-dark-texture > div { position: relative; z-index: 1; }
+
+  .bg-section-warm {
+    background: url('https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?w=1600&q=80&fit=crop') center/cover no-repeat;
+    position: relative;
+  }
+  .bg-section-warm::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(240,218,206,0.91);
+  }
+  .bg-section-warm .container { position: relative; z-index: 1; }
+
   /* DIVIDER */
   .divider {
     width: 100%;
     height: 1px;
     background: var(--border);
-    max-width: 780px;
-    margin: 0 auto;
   }
 
   /* SECTION BASE */
-  section { padding: 6rem 2rem; }
-  .container { max-width: 780px; margin: 0 auto; }
+  section { padding: 6rem 4rem; }
+  .container { max-width: 1140px; margin: 0 auto; }
+  .container-narrow { max-width: 860px; margin: 0 auto; }
+
+  /* WIDE LAYOUT GRIDS */
+  .section-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .section-two-col-reverse { direction: rtl; }
+  .section-two-col-reverse > * { direction: ltr; }
+
+  /* FULL BLEED HERO */
+  .hero-fullbleed {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    padding: 0;
+    position: relative;
+  }
+  .hero-content-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 5rem 6vw;
+  }
+  .hero-image-panel {
+    background: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&q=80&fit=crop&crop=faces') center/cover no-repeat;
+    position: relative;
+    min-height: 100vh;
+  }
+  .hero-image-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, var(--off-white) 0%, transparent 30%);
+  }
   .section-label {
     font-size: 0.72rem;
     font-weight: 500;
@@ -399,6 +463,14 @@
     margin-bottom: 1rem;
   }
 
+  .book-cover-subtitle {
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.4rem;
+  }
   /* TESTIMONIALS */
   .testimonials-grid {
     display: grid;
@@ -436,11 +508,12 @@
 
   /* FINAL CTA */
   .final-cta {
-    background: var(--dark);
     color: var(--off-white);
     text-align: center;
-    padding: 7rem 2rem;
+    padding: 8rem 4rem;
+    position: relative;
   }
+  .final-cta .container { position: relative; z-index: 1; }
   .final-cta h2 {
     color: var(--off-white);
     margin-bottom: 1rem;
@@ -451,10 +524,9 @@
   .final-cta .hero-trust { justify-content: center; color: rgba(250,248,245,0.4); }
   .final-cta .hero-trust svg path { stroke: rgba(250,248,245,0.4); }
 
-  /* FORM SECTION */
-  .form-section { padding: 6rem 2rem; }
+  .form-section { padding: 6rem 4rem; }
   .form-wrapper {
-    max-width: 520px;
+    max-width: 620px;
     margin: 0 auto;
     text-align: center;
   }
@@ -504,7 +576,7 @@
 
   /* FOOTER */
   footer {
-    padding: 2rem;
+    padding: 2rem 4rem;
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
@@ -712,14 +784,27 @@
   .mt-2 { margin-top: 2rem; }
   .mb-0 { margin-bottom: 0; }
 
-  @media (max-width: 600px) {
-    nav { padding: 1rem 1.2rem; }
-    section { padding: 4rem 1.4rem; }
-    .hero { padding: 7rem 1.4rem 4rem; }
-    .book-card { flex-direction: column; }
-    .book-cover { width: 120px; height: 175px; }
-    .realization-box { padding: 2rem 1.5rem; }
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+    .hero-fullbleed { grid-template-columns: 1fr; min-height: auto; }
+    .hero-content-panel { padding: 7rem 1.5rem 4rem; }
+    .hero-image-panel { min-height: 50vw; }
+    .hero-image-panel::after { background: linear-gradient(to bottom, var(--off-white) 0%, transparent 30%); }
+    .section-two-col { grid-template-columns: 1fr; gap: 2.5rem; }
+    .section-two-col-reverse { direction: ltr; }
+    #tool > .container > div[style*="grid-template-columns: 1fr 1fr"] { display: flex; flex-direction: column; gap: 2rem; }
+    .testimonials-grid[style*="1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .book-cover[style*="width: 100%"] { height: 240px !important; }
     footer { flex-direction: column; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); }
+    .cta-group { flex-direction: column; }
+    .btn-primary, .btn-ghost { text-align: center; }
+    .hero-micro-proof { max-width: 100%; }
+    .pricing-block { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -728,68 +813,68 @@
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="#">Manual para reconocer un Idiota</a>
-  <a class="nav-cta" href="#form">Quiero entender qué pasa</a>
+  <a class="nav-cta" href="#form">Quiero la verdad ahora</a>
 </nav>
 
 <!-- HERO -->
 <section style="padding: 0; position: relative;">
-  <div class="hero">
-    <div class="hero-eyebrow">Relaciones tóxicas. Narcisismo. Claridad.</div>
-    <h1>¿Y si no estás exagerando…<br>y sí te están <em>manipulando</em>?</h1>
-    <p class="hero-sub">
-      Llevas tiempo dudando de ti. De lo que sientes. De lo que recuerdas. Aquí puedes verlo con claridad.
-    </p>
-    <div class="cta-group">
-      <a href="#tool" class="btn-primary">Quiero saber la verdad ahora</a>
-      <a href="#pain" class="btn-ghost">Necesito entender esto ya</a>
-    </div>
+  <div class="hero-fullbleed">
+    <div class="hero-content-panel">
+      <div class="hero-eyebrow">Relaciones tóxicas. Narcisismo. Claridad.</div>
+      <h1>¿Y si no estás exagerando…<br>y sí te están <em>manipulando</em>?</h1>
+      <p class="hero-sub">
+        Llevas tiempo dudando de ti. De lo que sientes. De lo que recuerdas. Aquí puedes verlo con claridad.
+      </p>
+      <div class="cta-group">
+        <a href="#tool" class="btn-primary">Quiero saber la verdad ahora</a>
+        <a href="#pain" class="btn-ghost">Necesito entender esto ya</a>
+      </div>
 
-    <div class="hero-micro-proof">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--accent)" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>Ejemplo real: <em>"Detectamos invalidación emocional y gaslighting en esta conversación."</em></span>
-    </div>
+      <div class="hero-micro-proof">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--accent)" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Ejemplo real: <em>"Detectamos invalidación emocional y gaslighting en esta conversación."</em></span>
+      </div>
 
-    <div class="hero-trust">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="6" width="8" height="7" rx="1.5" stroke="#6B6460" stroke-width="1"/>
-        <path d="M5 6V4.5a2 2 0 014 0V6" stroke="#6B6460" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-      Nadie verá tu información. Es solo para ti.
+      <div class="hero-trust">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="3" y="6" width="8" height="7" rx="1.5" stroke="#6B6460" stroke-width="1"/>
+          <path d="M5 6V4.5a2 2 0 014 0V6" stroke="#6B6460" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        Nadie verá tu información. Es solo para ti.
+      </div>
     </div>
-    <div class="scroll-indicator">
-      <span>seguir leyendo</span>
-      <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
-        <path d="M1 1L8 8L15 1" stroke="#6B6460" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </div>
+    <div class="hero-image-panel"></div>
   </div>
 </section>
 
 <div class="divider"></div>
 
 <!-- PAIN SECTION -->
-<section class="pain-section" id="pain">
+<section class="pain-section bg-section-window" id="pain">
   <div class="container">
-    <div class="section-label">Lo que sientes</div>
-    <h2>¿Cuántas de estas frases<br>has <em>escuchado</em>?</h2>
-    <p class="lead">No son comentarios normales. Son frases que se repiten. Que te dejan sin respuesta. Que te hacen dudar de tu memoria, de tus emociones, de tu percepción.</p>
-
-    <ul class="phrase-list">
-      <li>Eres muy sensible. Te tomas todo a pecho.</li>
-      <li>Yo nunca dije eso. Todo lo malentiendes.</li>
-      <li>No entiendo por qué estás así, si no te hice nada.</li>
-      <li>Siempre haces drama por todo.</li>
-      <li>Después de todo lo que hago por ti…</li>
-      <li>No esperes que cambie, ya sabías cómo soy.</li>
-    </ul>
-
-    <p class="pain-close">
-      Estas frases no solo duelen. Confunden. Cada vez que las escuchas, empiezas a pensar que el problema es tu forma de sentir. Y sin darte cuenta, te vas moldeando para encajar en una relación donde tu voz no tiene lugar.
-    </p>
-
-    <div class="pain-click">
-      Si reconociste más de una… no es coincidencia.<br>
-      <strong>Es un patrón.</strong>
+    <div class="section-two-col">
+      <div>
+        <div class="section-label">Lo que sientes</div>
+        <h2>¿Cuántas de estas frases<br>has <em>escuchado</em>?</h2>
+        <p class="lead">No son comentarios normales. Son frases que se repiten. Que te dejan sin respuesta. Que te hacen dudar de tu memoria, de tus emociones, de tu percepción.</p>
+        <div class="pain-click">
+          Si reconociste más de una… no es coincidencia.<br>
+          <strong>Es un patrón.</strong>
+        </div>
+      </div>
+      <div>
+        <ul class="phrase-list">
+          <li>Eres muy sensible. Te tomas todo a pecho.</li>
+          <li>Yo nunca dije eso. Todo lo malentiendes.</li>
+          <li>No entiendo por qué estás así, si no te hice nada.</li>
+          <li>Siempre haces drama por todo.</li>
+          <li>Después de todo lo que hago por ti…</li>
+          <li>No esperes que cambie, ya sabías cómo soy.</li>
+        </ul>
+        <p class="pain-close" style="margin-top: 1.5rem;">
+          Estas frases no solo duelen. Confunden. Y sin darte cuenta, te vas moldeando para encajar en una relación donde tu voz no tiene lugar.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -797,68 +882,73 @@
 <!-- REALIZATION SECTION -->
 <section id="realization">
   <div class="container">
-    <div class="section-label">Lo que nadie te dijo</div>
-    <h2>El daño no es escandaloso.<br>Es <em>sutil.</em> Por eso duele más.</h2>
-
-    <p class="lead">No hablamos de monstruos ni de villanos evidentes. Hablamos de personas que, con actitudes cotidianas, van erosionando tu autoestima, tu claridad y tu seguridad emocional. Personas que no saben amar de forma sana y que, en vez de construir, desgastan.</p>
-
-    <p>A esto el libro lo llama <strong style="color: var(--dark);">Idiotismo Emocional</strong>. No como insulto, sino como una forma clara de nombrar esas conductas que confunden, duelen y muchas veces pasan desapercibidas. Porque cuando algo tiene nombre, es más fácil de identificar. Y cuando algo se reconoce, deja de tener tanto poder.</p>
-
-    <div class="realization-box">
-      <h3>No estás <span>loca</span>.<br>Estás siendo manipulada.</h3>
-      <p>Lo más peligroso no es cómo actúan, sino cómo te hacen dudar de ti. Con ese susurro persistente que te hace cuestionar tus propias sensaciones.</p>
-      <p>Si algo te duele, te frustra o te hace sentir menos… no necesitas justificarlo para que sea válido. Tu malestar es suficiente argumento para frenar y revisar.</p>
+    <div class="section-two-col">
+      <div>
+        <div class="section-label">Lo que nadie te dijo</div>
+        <h2>El daño no es escandaloso.<br>Es <em>sutil.</em> Por eso duele más.</h2>
+        <p class="lead">No hablamos de monstruos ni de villanos evidentes. Hablamos de personas que, con actitudes cotidianas, van erosionando tu autoestima, tu claridad y tu seguridad emocional.</p>
+        <p>A esto el libro lo llama <strong style="color: var(--dark);">Idiotismo Emocional</strong>. No como insulto, sino como una forma clara de nombrar esas conductas que confunden, duelen y muchas veces pasan desapercibidas. Porque cuando algo tiene nombre, deja de tener tanto poder.</p>
+      </div>
+      <div>
+        <div class="realization-box">
+          <h3>No estás <span>loca</span>.<br>Estás siendo manipulada.</h3>
+          <p>Lo más peligroso no es cómo actúan, sino cómo te hacen dudar de ti. Con ese susurro persistente que te hace cuestionar tus propias sensaciones.</p>
+          <p>Si algo te duele, te frustra o te hace sentir menos… no necesitas justificarlo para que sea válido. Tu malestar es suficiente argumento para frenar y revisar.</p>
+        </div>
+        <p style="margin-top: 1.5rem;">El Idiota Emocional rara vez llega con gritos. Llega encantador, atento, intenso. Y de a poco, vas corriendo tus límites, cediéndole todo el poder.</p>
+      </div>
     </div>
-
-    <p>El Idiota Emocional rara vez llega con gritos. Llega encantador, atento, intenso. Y de a poco, sin que te des cuenta, vas bajando tus defensas, corriendo tus límites, cediéndole todo el poder. Hasta que un día te miras y no reconoces a la persona en el espejo.</p>
   </div>
 </section>
 
-<div class="divider" style="max-width: 780px; margin: 0 auto;"></div>
+<div class="divider"></div>
 
 <!-- MINI TEST SECTION -->
 <section id="test" style="background: var(--cream);">
   <div class="container">
-    <div class="section-label">Un momento de honestidad</div>
-    <h2>¿Qué sientes cuando estás<br>con <em>esa persona</em>?</h2>
-    <p class="lead">No es un diagnóstico. Es una pregunta que merece una respuesta honesta. Marca lo que reconoces en ti.</p>
-
-    <div style="display: flex; flex-direction: column; gap: 0.7rem; margin: 2.5rem 0;" id="test-items">
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>Me siento más sola estando con él que cuando estoy sola.</span>
-      </label>
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>He cambiado mi forma de ser para evitar conflictos.</span>
-      </label>
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>Me cuesta decirle lo que realmente siento.</span>
-      </label>
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>Me hace dudar de mis propias emociones.</span>
-      </label>
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>Siento que mi energía se consume en esta relación.</span>
-      </label>
-      <label class="test-item" onclick="this.classList.toggle('checked')">
-        <span class="test-check"></span>
-        <span>Cuando me alejo, me busca. Cuando me acerco, se aleja.</span>
-      </label>
-    </div>
-
-    <div id="test-result" style="display:none; background: var(--dark); color: var(--off-white); border-radius: 12px; padding: 1.5rem 2rem; margin-top: 1.5rem;">
-      <p id="test-result-text" style="color: rgba(250,248,245,0.85); margin: 0 0 1rem; line-height: 1.7;"></p>
-      <div id="test-result-cta" style="display:none;">
-        <p style="font-size: 0.85rem; color: rgba(250,248,245,0.55); margin: 0 0 1rem;">Esto no es casualidad. Lo que estás sintiendo tiene explicación.</p>
-        <a href="#tool" class="btn-primary" style="font-size: 0.9rem; padding: 0.8rem 1.6rem;">Quiero ver mi caso con claridad →</a>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+      <div>
+        <div class="section-label">Un momento de honestidad</div>
+        <h2>¿Qué sientes cuando estás<br>con <em>esa persona</em>?</h2>
+        <p class="lead">No es un diagnóstico. Es una pregunta que merece una respuesta honesta. Marca lo que reconoces en ti.</p>
+        <div id="test-result" style="display:none; background: var(--dark); color: var(--off-white); border-radius: 12px; padding: 1.5rem 2rem; margin-top: 1.5rem;">
+          <p id="test-result-text" style="color: rgba(250,248,245,0.85); margin: 0 0 1rem; line-height: 1.7;"></p>
+          <div id="test-result-cta" style="display:none;">
+            <p style="font-size: 0.85rem; color: rgba(250,248,245,0.55); margin: 0 0 1rem;">Esto no es casualidad. Lo que estás sintiendo tiene explicación.</p>
+            <a href="#tool" class="btn-primary" style="font-size: 0.9rem; padding: 0.8rem 1.6rem;">Quiero ver mi caso con claridad →</a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="display: flex; flex-direction: column; gap: 0.7rem;" id="test-items">
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>Me siento más sola estando con él que cuando estoy sola.</span>
+          </label>
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>He cambiado mi forma de ser para evitar conflictos.</span>
+          </label>
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>Me cuesta decirle lo que realmente siento.</span>
+          </label>
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>Me hace dudar de mis propias emociones.</span>
+          </label>
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>Siento que mi energía se consume en esta relación.</span>
+          </label>
+          <label class="test-item" onclick="this.classList.toggle('checked')">
+            <span class="test-check"></span>
+            <span>Cuando me alejo, me busca. Cuando me acerco, se aleja.</span>
+          </label>
+        </div>
+        <button onclick="calcTest()" style="margin-top: 1.5rem; background: var(--dark); color: white; border: none; padding: 0.9rem 2rem; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer;">Ver mi resultado</button>
       </div>
     </div>
-
-    <button onclick="calcTest()" style="margin-top: 1.5rem; background: var(--dark); color: white; border: none; padding: 0.9rem 2rem; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer;">Ver mi resultado</button>
   </div>
 </section>
 
@@ -917,152 +1007,162 @@ function calcTest() {
 }
 </script>
 
-<div class="divider" style="max-width: 780px; margin: 0 auto;"></div>
+<div class="divider"></div>
 
 <!-- CONFRONTATION BLOCK -->
-<section style="padding: 5rem 2rem; background: var(--dark);">
+<section class="bg-section-dark-texture" style="padding: 7rem 4rem;">
   <div class="container" style="text-align: center;">
-    <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.3rem, 3vw, 2rem); color: var(--off-white); line-height: 1.5; max-width: 600px; margin: 0 auto 1.5rem;">
+    <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.5rem, 3vw, 2.4rem); color: var(--off-white); line-height: 1.5; max-width: 700px; margin: 0 auto 1.5rem;">
       Si llegaste hasta aquí… ya hay una parte de ti que lo sabe.
     </p>
-    <p style="font-size: 1rem; color: rgba(250,248,245,0.6); max-width: 480px; margin: 0 auto 0.8rem; line-height: 1.8;">
+    <p style="font-size: 1.05rem; color: rgba(250,248,245,0.6); max-width: 520px; margin: 0 auto 0.8rem; line-height: 1.8;">
       No estás buscando información. Estás buscando confirmación.
     </p>
-    <p style="font-size: 1rem; color: rgba(250,248,245,0.85); max-width: 480px; margin: 0 auto; line-height: 1.8; font-weight: 500;">
+    <p style="font-size: 1.1rem; color: rgba(250,248,245,0.9); max-width: 520px; margin: 0 auto 2rem; line-height: 1.8; font-weight: 500;">
       Y eso, aunque incomode, ya es una respuesta.
     </p>
-    <div style="margin-top: 2rem; font-size: 0.78rem; color: rgba(250,248,245,0.35); letter-spacing: 0.12em; text-transform: uppercase;">No todas las relaciones duelen así. Pero cuando duelen… no es casualidad.</div>
+    <div style="font-size: 0.8rem; color: rgba(250,248,245,0.3); letter-spacing: 0.15em; text-transform: uppercase;">No todas las relaciones duelen así. Pero cuando duelen… no es casualidad.</div>
   </div>
 </section>
 
-<div class="divider" style="max-width: 780px; margin: 0 auto;"></div>
+<div class="divider"></div>
 
 <!-- PRODUCT / TOOL SECTION -->
 <section id="tool">
   <div class="container">
-    <div class="section-label">La herramienta</div>
-    <h2>Pega tu conversación.<br>Recibe <em>claridad.</em></h2>
-
-    <p class="lead">
-      Hay cosas que son difíciles de ver cuando estás dentro. Una mirada externa, sin juicio, puede detectar patrones que tú no puedes ver porque estás demasiado cerca.
-    </p>
-
-    <p>
-      Nuestra herramienta analiza conversaciones de WhatsApp u otras apps y te muestra, en lenguaje simple, qué dinámicas están ocurriendo. Sin diagnósticos médicos. Sin etiquetas clínicas. Solo claridad.
-    </p>
-
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <h4>Pega tu conversación</h4>
-          <p>Copia los mensajes que quieres analizar y pégalos en el analizador. No hace falta que sean perfectos.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <h4>Recibe tu análisis</h4>
-          <p>En segundos, obtendrás una lectura de los patrones de comunicación: lo que dicen las palabras, y lo que no dicen.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <h4>Entiende qué está pasando</h4>
-          <p>Sin tecnicismos. Sin alarmar innecesariamente. Con la honestidad que mereces para tomar tus propias decisiones.</p>
-        </div>
-      </div>
+    <div style="max-width: 680px; margin-bottom: 3rem;">
+      <div class="section-label">La herramienta</div>
+      <h2>Pega tu conversación.<br>Recibe <em>claridad.</em></h2>
+      <p class="lead">
+        Hay cosas difíciles de ver cuando estás dentro. Una mirada externa puede detectar patrones que tú no puedes ver porque estás demasiado cerca.
+      </p>
     </div>
 
-    <!-- MOCK ANALYSIS EXAMPLE -->
-    <div class="analysis-example">
-      <div class="analysis-label">
-        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--accent)" stroke-width="1.2"/><path d="M4 7h6M7 4v6" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg>
-        Ejemplo de análisis real
-      </div>
-      <div class="analysis-message">
-        <span class="analysis-msg-label">Mensaje analizado</span>
-        <span class="analysis-msg-text">"Estás exagerando otra vez. Siempre haces lo mismo."</span>
-      </div>
-      <div class="analysis-findings">
-        <div class="finding">
-          <span class="finding-dot red"></span>
-          <div>
-            <strong>Invalidación emocional</strong>
-            <p>Descarta tu reacción como desproporcionada sin examinarla.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;">
+      <div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Pega tu conversación</h4>
+              <p>Copia los mensajes que quieres analizar. No hace falta que sean perfectos.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Recibe tu análisis</h4>
+              <p>En segundos, obtendrás una lectura de los patrones: lo que dicen las palabras, y lo que no dicen.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Entiende qué está pasando</h4>
+              <p>Sin tecnicismos. Con la honestidad que mereces para tomar tus propias decisiones.</p>
+            </div>
           </div>
         </div>
-        <div class="finding">
-          <span class="finding-dot red"></span>
-          <div>
-            <strong>Gaslighting leve</strong>
-            <p>Te hace dudar de si tu percepción de los hechos es válida.</p>
-          </div>
-        </div>
-        <div class="finding">
-          <span class="finding-dot amber"></span>
-          <div>
-            <strong>Generalización punitiva</strong>
-            <p>"Siempre" convierte un momento en un juicio sobre tu carácter.</p>
-          </div>
-        </div>
-      </div>
-      <div class="analysis-impact">
-        <div class="impact-row">
-          <span class="impact-label">Impacto emocional</span>
-          <span class="impact-value">Genera duda en tu percepción y reduce tu seguridad emocional.</span>
-        </div>
-        <div class="impact-row">
-          <span class="impact-label">Nivel de manipulación</span>
-          <span class="impact-badge">Medio-alto</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- PRICING -->
-    <div class="pricing-block">
-      <div class="pricing-item featured">
-        <div class="pricing-tag">Para empezar</div>
-        <div class="pricing-price">Gratis</div>
-        <div class="pricing-desc">Primer análisis de conversación</div>
-      </div>
-      <div class="pricing-item">
-        <div class="pricing-tag">Análisis completo</div>
-        <div class="pricing-price">5 USD</div>
-        <div class="pricing-desc">Informe detallado con contexto y patrones</div>
-      </div>
-    </div>
+        <!-- PRICING -->
+        <div class="pricing-block" style="margin-top: 2rem;">
+          <div class="pricing-item featured">
+            <div class="pricing-tag">Para empezar</div>
+            <div class="pricing-price">Gratis</div>
+            <div class="pricing-desc">Primer análisis de conversación</div>
+          </div>
+          <div class="pricing-item">
+            <div class="pricing-tag">Análisis completo</div>
+            <div class="pricing-price">5 USD</div>
+            <div class="pricing-desc">Informe detallado con contexto y patrones</div>
+          </div>
+        </div>
 
-    <div style="display:flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 2rem;">
-      <a href="#form" class="btn-primary">Quiero saber la verdad ahora</a>
-      <span style="font-size: 0.82rem; color: var(--muted);">Tu conversación no se guarda. Nadie la verá.</span>
+        <div style="display:flex; gap: 1rem; flex-wrap: wrap; align-items: center; margin-top: 2rem;">
+          <a href="#form" class="btn-primary">Quiero saber la verdad ahora</a>
+          <span style="font-size: 0.82rem; color: var(--muted);">Tu conversación no se guarda.</span>
+        </div>
+      </div>
+
+      <!-- MOCK ANALYSIS -->
+      <div class="analysis-example" style="margin: 0;">
+        <div class="analysis-label">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--accent)" stroke-width="1.2"/><path d="M4 7h6M7 4v6" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Ejemplo de análisis real
+        </div>
+        <div class="analysis-message">
+          <span class="analysis-msg-label">Mensaje analizado</span>
+          <span class="analysis-msg-text">"Estás exagerando otra vez. Siempre haces lo mismo."</span>
+        </div>
+        <div class="analysis-findings">
+          <div class="finding">
+            <span class="finding-dot red"></span>
+            <div>
+              <strong>Invalidación emocional</strong>
+              <p>Descarta tu reacción como desproporcionada sin examinarla.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <span class="finding-dot red"></span>
+            <div>
+              <strong>Gaslighting leve</strong>
+              <p>Te hace dudar de si tu percepción de los hechos es válida.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <span class="finding-dot amber"></span>
+            <div>
+              <strong>Generalización punitiva</strong>
+              <p>"Siempre" convierte un momento en un juicio sobre tu carácter.</p>
+            </div>
+          </div>
+        </div>
+        <div class="analysis-impact">
+          <div class="impact-row">
+            <span class="impact-label">Impacto emocional</span>
+            <span class="impact-value">Genera duda en tu percepción y reduce tu seguridad emocional.</span>
+          </div>
+          <div class="impact-row">
+            <span class="impact-label">Nivel de manipulación</span>
+            <span class="impact-badge">Medio-alto</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- BOOK SECTION -->
-<section class="book-section">
+<section class="book-section bg-section-warm">
   <div class="container">
-    <div class="section-label">El libro</div>
-    <h2>Esto no es un libro<br>de <em>autoayuda.</em></h2>
-
-    <p class="lead">
-      No te va a decir que te quieras más. No viene con frases bonitas ni consejos de revista. "Manual para reconocer un Idiota" es un mapa para ponerle nombre a lo que duele. Porque cuando algo tiene nombre, deja de confundir.
-    </p>
-
-    <div class="book-card">
-      <div class="book-cover">
-        <div class="book-cover-title">Manual para reconocer un Idiota</div>
-        <div class="book-cover-author">Aris S. Lancz</div>
-      </div>
-      <div class="book-info">
-        <div class="book-tag">¿Cómo detectar relaciones tóxicas, reconocer a tu pareja narcisista y recuperar tu autoestima?</div>
-        <h3>Escrito desde la experiencia.<br>No desde la teoría.</h3>
+    <div class="section-two-col" style="align-items: start;">
+      <div>
+        <div class="section-label">El libro</div>
+        <h2>Esto no es un libro<br>de <em>autoayuda.</em></h2>
+        <p class="lead">
+          No te va a decir que te quieras más. No viene con frases bonitas. "Manual para reconocer un Idiota" es un mapa para ponerle nombre a lo que duele.
+        </p>
         <p>Aris S. Lancz también fue Ella. Durante 15 años normalizó lo que no debía normalizar. Por eso este libro no viene de un consultorio, sino de cicatrices reales. De carne y memoria.</p>
-        <p>Vas a conocer los perfiles más comunes del Idiota Emocional, detectar frases que parecen inofensivas pero están destruyendo tu autoestima, y entender cómo el control se disfraza de protección. Y también vas a encontrar un mapa para salir.</p>
-        <p style="font-size: 0.9rem; color: var(--accent-dark); font-weight: 500;">Si te reconociste en esta página… este libro es para ti. No para motivarte. Para abrirte los ojos.</p>
-        <a href="#form" class="btn-primary mt-1" style="display: inline-block;">Quiero entender TODO esto</a>
+        <p>Vas a conocer los perfiles más comunes del Idiota Emocional, detectar frases que parecen inofensivas pero están destruyendo tu autoestima, y entender cómo el control se disfraza de protección.</p>
+        <p style="font-size: 0.9rem; color: var(--accent-dark); font-weight: 500; margin-top: 0.5rem;">Si te reconociste en esta página… este libro es para ti. No para motivarte. Para abrirte los ojos.</p>
+        <a href="#form" class="btn-primary mt-1" style="display: inline-block; margin-top: 1.5rem;">Quiero entender TODO esto</a>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="book-cover" style="width: 100%; height: 320px;">
+          <div class="book-cover-title" style="font-size: 1.2rem;">Manual para reconocer un Idiota</div>
+          <div class="book-cover-subtitle">¿Cómo detectar relaciones tóxicas, reconocer a tu pareja narcisista y recuperar tu autoestima?</div>
+          <div class="book-cover-author">Aris S. Lancz</div>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 1.4rem 1.6rem; border: 1px solid var(--border);">
+          <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 0.8rem;">Lo que cubre el libro</div>
+          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+            <div style="font-size: 0.88rem; color: var(--dark); display: flex; gap: 0.6rem; align-items: baseline;"><span style="color: var(--accent); flex-shrink:0;">→</span> Los 7 perfiles del Idiota Emocional</div>
+            <div style="font-size: 0.88rem; color: var(--dark); display: flex; gap: 0.6rem; align-items: baseline;"><span style="color: var(--accent); flex-shrink:0;">→</span> Señales rojas que normalizaste</div>
+            <div style="font-size: 0.88rem; color: var(--dark); display: flex; gap: 0.6rem; align-items: baseline;"><span style="color: var(--accent); flex-shrink:0;">→</span> Cómo te enganchan sin que lo veas</div>
+            <div style="font-size: 0.88rem; color: var(--dark); display: flex; gap: 0.6rem; align-items: baseline;"><span style="color: var(--accent); flex-shrink:0;">→</span> Cómo salir del ciclo sin culpa</div>
+            <div style="font-size: 0.88rem; color: var(--dark); display: flex; gap: 0.6rem; align-items: baseline;"><span style="color: var(--accent); flex-shrink:0;">→</span> Reconstrucción personal: volver a ti</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1071,31 +1171,34 @@ function calcTest() {
 <!-- SOCIAL PROOF -->
 <section>
   <div class="container">
-    <div class="section-label">Lo que dicen otras</div>
-    <h2>Ellas también pensaron<br>que el problema <em>eran ellas.</em></h2>
-
-    <div class="testimonials-grid">
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Por años creí que era demasiado sensible. Este libro me hizo ver que no era yo quien tenía el problema. Que confiar nunca fue el error."</p>
-        <div class="testimonial-author">— Valentina, 31 años</div>
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start;">
+      <div>
+        <div class="section-label">Lo que dicen otras</div>
+        <h2>Ellas también pensaron que el problema <em>eran ellas.</em></h2>
       </div>
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Lo más difícil fue aceptar que hubo momentos buenos. Aris explica exactamente por qué eso nos mantiene atrapadas. Eso no lo había leído en ningún otro lado."</p>
-        <div class="testimonial-author">— Camila, 29 años</div>
-      </div>
-      <div class="testimonial">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Me reconocí en el perfil del Pasivo-Agresivo desde la primera línea. Llorando y asintiendo con la cabeza a la vez. No es fácil, pero es necesario."</p>
-        <div class="testimonial-author">— Daniela, 36 años</div>
+      <div class="testimonials-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Por años creí que era demasiado sensible. Este libro me hizo ver que no era yo quien tenía el problema."</p>
+          <div class="testimonial-author">— Valentina, 31 años</div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Lo más difícil fue aceptar que hubo momentos buenos. Aris explica exactamente por qué eso nos mantiene atrapadas."</p>
+          <div class="testimonial-author">— Camila, 29 años</div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Me reconocí en el perfil del Pasivo-Agresivo desde la primera línea. Llorando y asintiendo a la vez."</p>
+          <div class="testimonial-author">— Daniela, 36 años</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FINAL CTA -->
-<section class="final-cta">
+<section class="final-cta bg-section-dark-texture">
   <div class="container">
     <h2>Quiero dejar de<br>dudar de <em>mí.</em></h2>
     <p>No necesitas más tiempo. Necesitas claridad.</p>
