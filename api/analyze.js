@@ -1,17 +1,23 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Método no permitido" });
+    return res.status(405).json({
+      status: "neutral",
+      title: "Método no permitido",
+      message: "Esta ruta solo acepta POST.",
+      recommendation: "Envía el texto desde el formulario."
+    });
   }
 
   try {
-    const { text } = req.body || {};
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const text = body?.text;
 
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
         status: "neutral",
-        title: "Error de configuración",
-        message: "Falta la API key en el servidor.",
-        recommendation: "Configura OPENAI_API_KEY en Vercel."
+        title: "Falta configuración",
+        message: "No se encontró OPENAI_API_KEY en Vercel.",
+        recommendation: "Agrega la variable en Settings > Environment Variables."
       });
     }
 
@@ -20,22 +26,41 @@ export default async function handler(req, res) {
         status: "neutral",
         title: "Texto inválido",
         message: "No se recibió un texto válido para analizar.",
-        recommendation: "Escribe un mensaje antes de analizar."
+        recommendation: "Pega una conversación o mensaje antes de analizar."
       });
     }
 
     const prompt = `
 Eres un analista de comunicación emocional.
 
-Evalúa si el texto contiene manipulación emocional, gaslighting o invalidación.
+Evalúa si el texto contiene:
+- manipulación emocional
+- invalidación emocional
+- culpa inducida
+- gaslighting
+- control disfrazado de calma o amor
 
-Responde SOLO en JSON con este formato:
+No diagnostiques personas.
+No afirmes abuso como certeza por un solo mensaje.
+Habla con claridad, empatía y firmeza.
+
+Responde SOLO con JSON válido en este formato exacto:
 {
-  "status": "warning | neutral | safe",
-  "title": "título breve",
-  "message": "explicación clara",
-  "recommendation": "qué hacer"
+  "status": "warning",
+  "title": "Posibles señales de manipulación emocional",
+  "message": "explicación breve y clara",
+  "recommendation": "recomendación emocional concreta"
 }
+
+Si no hay señales claras, usa:
+{
+  "status": "safe",
+  "title": "No se detecta manipulación clara",
+  "message": "explicación breve y clara",
+  "recommendation": "recomendación emocional concreta"
+}
+
+Si es ambiguo, usa status "neutral".
 
 Texto:
 """${text}"""
@@ -58,27 +83,28 @@ Texto:
     if (!response.ok) {
       return res.status(500).json({
         status: "neutral",
-        title: "Error en el análisis",
-        message: data?.error?.message || "No se pudo analizar el texto.",
-        recommendation: "Intenta nuevamente en unos segundos."
+        title: "Error en OpenAI",
+        message: data?.error?.message || "La API devolvió un error.",
+        recommendation: "Revisa el modelo, la clave o el saldo de la cuenta."
       });
     }
 
     const raw =
-      data.output?.[0]?.content?.[0]?.text ||
       data.output_text ||
+      data.output?.map(item =>
+        item.content?.map(c => c.text || "").join(" ")
+      ).join(" ") ||
       "";
 
     let parsed;
-
     try {
       parsed = JSON.parse(raw);
     } catch {
       parsed = {
         status: "neutral",
         title: "Resultado orientativo",
-        message: raw || "No se pudo interpretar el análisis.",
-        recommendation: "Toma esto como una orientación inicial."
+        message: raw || "No se pudo interpretar la respuesta del análisis.",
+        recommendation: "Intenta nuevamente o revisa el prompt."
       };
     }
 
@@ -88,8 +114,8 @@ Texto:
     return res.status(500).json({
       status: "neutral",
       title: "Error inesperado",
-      message: error.message || "Ocurrió un error al analizar.",
-      recommendation: "Intenta nuevamente."
+      message: error.message || "Ocurrió un error interno.",
+      recommendation: "Intenta nuevamente en unos segundos."
     });
   }
 }
