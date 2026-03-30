@@ -1,22 +1,14 @@
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
 
   try {
-    let body = req.body;
+    const { text } = req.body || {};
 
-    if (typeof body === "string") {
-      body = JSON.parse(body);
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: "Falta OPENAI_API_KEY en Vercel" });
     }
-
-    const text = body?.text;
 
     if (!text || typeof text !== "string" || !text.trim()) {
       return res.status(400).json({ error: "Texto inválido" });
@@ -48,12 +40,27 @@ Texto:
 """${text}"""
 `;
 
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: prompt
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        input: prompt
+      })
     });
 
-    const raw = response.output_text;
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(500).json({
+        error: data?.error?.message || "Error al llamar a OpenAI"
+      });
+    }
+
+    const raw = data.output?.[0]?.content?.[0]?.text || data.output_text || "";
 
     let parsed;
     try {
@@ -62,7 +69,7 @@ Texto:
       parsed = {
         status: "neutral",
         title: "Resultado orientativo",
-        message: raw,
+        message: raw || "No se pudo interpretar la respuesta.",
         recommendation: "Toma este análisis como una orientación inicial."
       };
     }
@@ -70,10 +77,8 @@ Texto:
     return res.status(200).json(parsed);
 
   } catch (error) {
-    console.error("ERROR EN /api/analyze:", error);
-
     return res.status(500).json({
-      error: error?.message || "Error interno al analizar el texto"
+      error: error.message || "Error interno al analizar el texto"
     });
   }
 }
