@@ -1,17 +1,22 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
+const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 export default async function handler(req, res) {
-  // Permitir solo POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
 
   try {
-    const { text } = req.body || {};
+    let body = req.body;
+
+    if (typeof body === "string") {
+      body = JSON.parse(body);
+    }
+
+    const text = body?.text;
 
     if (!text || typeof text !== "string" || !text.trim()) {
       return res.status(400).json({ error: "Texto inválido" });
@@ -43,8 +48,8 @@ Texto:
 """${text}"""
 `;
 
-    const response = await openai.responses.create({
-      model: "gpt-5.4",
+    const response = await client.responses.create({
+      model: "gpt-4.1-mini",
       input: prompt
     });
 
@@ -58,15 +63,17 @@ Texto:
         status: "neutral",
         title: "Resultado orientativo",
         message: raw,
-        recommendation: "Toma este análisis como orientación inicial."
+        recommendation: "Toma este análisis como una orientación inicial."
       };
     }
 
     return res.status(200).json(parsed);
+
   } catch (error) {
-    console.error("Error en analyze:", error);
+    console.error("ERROR EN /api/analyze:", error);
+
     return res.status(500).json({
-      error: "No se pudo analizar el texto"
+      error: error?.message || "Error interno al analizar el texto"
     });
   }
 }
