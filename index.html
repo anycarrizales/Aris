@@ -509,16 +509,23 @@
 
   /* FINAL CTA */
   .final-cta {
-    color: var(--off-white);
-    text-align: center;
-    padding: 8rem 4rem;
-    position: relative;
-  }
+  color: var(--off-white);
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
   .final-cta .container { position: relative; z-index: 1; }
   .final-cta h2 {
-    color: var(--off-white);
-    margin-bottom: 1rem;
-  }
+  color: var(--off-white);
+  margin-bottom: 1rem;
+  white-space: nowrap;
+  font-size: clamp(28px, 5vw, 56px);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
   .final-cta h2 em { color: var(--accent); }
   .final-cta p { color: rgba(250,248,245,0.65); max-width: 500px; margin: 0 auto 2.5rem; }
   .final-cta .btn-primary { font-size: 1.05rem; padding: 1.1rem 2.6rem; }
@@ -1206,7 +1213,7 @@ function calcTest() {
 <!-- FINAL CTA -->
 <section class="final-cta bg-section-dark-texture">
   <div class="container">
-    <h2>Quiero dejar de<br>dudar de <em>mí.</em></h2>
+    <h2>Quiero dejar de dudar de <em>mí.</em></h2>
     <p>No necesitas más tiempo. Necesitas claridad.</p>
     <div class="hero-trust mt-2">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
