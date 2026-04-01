@@ -31,41 +31,59 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-Eres un analista de comunicación emocional con enfoque en relaciones.
+const prompt = `
+Eres un analista de comunicación emocional con enfoque en relaciones y vas a analizar lo que le dijo su pareja a esta persona.
 
-Tu tarea es clasificar el siguiente texto en UNO de estos 6 niveles:
+Clasifica el siguiente texto en UNO de estos 6 niveles, según las señales presentes:
 
-1. safe
-   = no hay señales claras de manipulación o maltrato emocional.
+safe:
+- tono respetuoso
+- no hay culpa, presión, humillación ni invalidación
 
-2. neutral
-   = hay ambigüedad o incomodidad leve, pero no es concluyente.
+neutral:
+- hay incomodidad o ambigüedad, pero no señales suficientes para hablar de manipulación
 
-3. warning_soft
-   = hay indicios suaves de invalidación emocional, minimización o confusión.
+warning_soft:
+- minimiza emociones
+- invalida sutilmente
+- hace que la persona se explique de más
+- genera confusión leve
 
-4. warning
-   = hay señales de manipulación emocional, culpa, contradicciones o control sutil.
+warning:
+- culpa a la otra persona por sentir
+- contradicciones
+- exigencias injustas
+- control emocional sutil
+- manipulación emocional visible
 
-5. high_warning
-   = hay señales claras de manipulación emocional, gaslighting o deterioro fuerte de la seguridad emocional.
+high_warning:
+- gaslighting
+- hace dudar de la memoria o de la percepción
+- hace sentir que el problema siempre es la otra persona
+- desgaste emocional fuerte
 
-6. toxic
-   = hay señales de presión, miedo, coerción, sometimiento o una dinámica emocionalmente dañina.
+toxic:
+- miedo
+- coerción
+- presión
+- sometimiento
+- amenaza
+- imposibilidad de decir "no" con seguridad
+- dinámica emocionalmente dañina
 
 Reglas:
-- Responde SOLO con JSON válido.
-- No expliques nada fuera del JSON.
+- Si hay invalidación clara, no uses "neutral".
+- Si hay culpa, manipulación o contradicción repetida, usa mínimo "warning".
+- Si hay miedo o presión para someterse, usa "toxic".
 - No diagnostiques personas.
-- Evalúa el lenguaje, el tono, la presión emocional, la invalidación, la culpa y el miedo.
-- Si dudas entre dos niveles, elige el más prudente pero útil.
+- Responde SOLO con JSON válido.
 
-Formato exacto de salida:
+Formato exacto:
 {
   "level": "safe | neutral | warning_soft | warning | high_warning | toxic"
 }
 
-Texto a evaluar:
+Texto:
 """${text}"""
 `;
 
