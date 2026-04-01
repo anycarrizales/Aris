@@ -1280,6 +1280,10 @@ function increaseUsage() {
   localStorage.setItem("usage_count", current + 1);
 }
  async function analizarConversacion() {
+  const dialogInput = document.getElementById('dialogInput');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const resultadoAnalisis = document.getElementById('resultadoAnalisis');
+  
   const usage = getUsage();
 
 if (usage >= MAX_FREE) {
@@ -1300,9 +1304,7 @@ if (usage >= MAX_FREE) {
   `;
   return;
 }
-  const dialogInput = document.getElementById('dialogInput');
-  const analyzeBtn = document.getElementById('analyzeBtn');
-  const resultadoAnalisis = document.getElementById('resultadoAnalisis');
+
   const text = dialogInput.value.trim();
 
   if (!text) {
