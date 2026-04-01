@@ -12,6 +12,49 @@ export default async function handler(req, res) {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const text = body?.text?.trim();
 
+    const lowerText = text.toLowerCase();
+
+const physicalViolencePatterns = [
+  "me pegó",
+  "me pego",
+  "me golpeó",
+  "me golpeo",
+  "me dio una cachetada",
+  "me dio una bofetada",
+  "me empujó",
+  "me empujo",
+  "me jaló",
+  "me jalo",
+  "me agarró del cuello",
+  "me agarro del cuello",
+  "me lanzó",
+  "me lanzo",
+  "me aventó",
+  "me avento",
+  "me tiró al piso",
+  "me tiro al piso",
+  "me lastimó",
+  "me lastimo",
+  "me agredió",
+  "me agredio",
+  "me dio un puñetazo",
+  "me dio un golpe",
+  "me dio en la cara"
+];
+
+if (physicalViolencePatterns.some(pattern => lowerText.includes(pattern))) {
+  return res.status(200).json({
+    status: "toxic",
+    title: "Hay señales de una dinámica gravemente dañina",
+    message: `Lo que compartes incluye agresión física. Eso no entra en la categoría de “señales poco claras”.
+
+Aunque después haya disculpas, promesas o explicaciones, que alguien te golpee, te empuje o te lastime físicamente es una señal grave y debe tomarse en serio.
+
+No estás exagerando. Y no necesitas minimizar lo ocurrido para que tu dolor sea válido.`,
+    recommendation: `Si algo así pasó, no lo normalices. No es culpa tuya por ninguna razón. Busca ayuda profesional y si necesitas comprender mejor estas dinámicas y empezar a recuperar tu claridad, mi libro Manual para reconocer un Idiota puede ayudarte a detectar patrones de manipulación y maltrato con más precisión.`
+  });
+}
+
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
         status: "neutral",
@@ -31,7 +74,7 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-Eres un analista de comunicación emocional con enfoque en relaciones y vas a analizar lo que le dijo su pareja a esta persona.
+Eres un analista de comunicación emocional con enfoque en relaciones y experto en comportamientos narcisistas, que sabes reconocer los términos y comportamientos de manipúlación que usan. Vas a analizar lo que le dijo su pareja a esta persona.
 
 Clasifica el siguiente texto en UNO de estos 6 niveles, según las señales presentes:
 
@@ -47,6 +90,8 @@ warning_soft:
 - invalida sutilmente
 - hace que la persona se explique de más
 - genera confusión leve
+- es contradictorio en su discurso
+- te culpa de todo
 
 warning:
 - culpa a la otra persona por sentir
@@ -54,14 +99,17 @@ warning:
 - exigencias injustas
 - control emocional sutil
 - manipulación emocional visible
+- burla en público
 
 high_warning:
 - gaslighting
 - hace dudar de la memoria o de la percepción
 - hace sentir que el problema siempre es la otra persona
 - desgaste emocional fuerte
+- humillación
 
 toxic:
+- violencia física o agresión física de cualquier tipo
 - miedo
 - coerción
 - presión
