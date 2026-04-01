@@ -1269,7 +1269,37 @@ function calcTest() {
 </footer>
 
 <script>
-async function analizarConversacion() {
+const MAX_FREE = 3;
+
+function getUsage() {
+  return parseInt(localStorage.getItem("usage_count") || "0");
+}
+
+function increaseUsage() {
+  const current = getUsage();
+  localStorage.setItem("usage_count", current + 1);
+}
+ async function analizarConversacion() {
+  const usage = getUsage();
+
+if (usage >= MAX_FREE) {
+  resultadoAnalisis.innerHTML = `
+    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
+      <h3 style="color:#9E5235;">Has llegado al límite gratuito</h3>
+      <p style="color:#6B6460;">
+        Ya usaste tus análisis gratuitos.
+      </p>
+      <p style="color:#1A1714;">
+        Si quieres seguir entendiendo lo que estás viviendo, este libro puede ayudarte a ver con claridad lo que hoy te confunde.
+      </p>
+      <a href="TU_LINK_DE_COMPRA" 
+         style="display:inline-block; margin-top:1rem; background:#9E5235; color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none;">
+        Ver el libro
+      </a>
+    </div>
+  `;
+  return;
+}
   const dialogInput = document.getElementById('dialogInput');
   const analyzeBtn = document.getElementById('analyzeBtn');
   const resultadoAnalisis = document.getElementById('resultadoAnalisis');
@@ -1303,21 +1333,22 @@ async function analizarConversacion() {
     });
 
     const data = await response.json();
+    increaseUsage();
 
     if (!response.ok) {
-  resultadoAnalisis.innerHTML = `
-    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-      <h3 style="margin:0 0 .6rem; color:#9E5235; font-family:'Playfair Display', serif;">
-        ${data.title || 'Error'}
-      </h3>
-      <p style="margin:0 0 .6rem; color:#6B6460;">
-        ${data.message || data.error || 'Ocurrió un error al analizar el texto.'}
-      </p>
-      <strong style="color:#1A1714;">
-        ${data.recommendation || ''}
-      </strong>
-    </div>
-  `;
+resultadoAnalisis.innerHTML = `
+  <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.4rem;">
+    <h3 style="margin:0 0 .8rem; font-family:'Playfair Display', serif; color:#1A1714;">
+      ${data.title}
+    </h3>
+    <p style="margin:0 0 .8rem; color:#6B6460; white-space:pre-line;">
+      ${data.message}
+    </p>
+    <p style="margin:0; color:#1A1714; font-weight:500; white-space:pre-line;">
+      ${data.recommendation}
+    </p>
+  </div>
+`;
   return;
 }
 
@@ -1325,15 +1356,36 @@ async function analizarConversacion() {
     let colorBadge = '#C47A14';
     let textoEstado = 'Resultado orientativo';
 
-    if (data.status === 'warning') {
-      colorFondo = '#F8E6E4';
-      colorBadge = '#C4414A';
-      textoEstado = 'Posibles señales de manipulación emocional';
-    } else if (data.status === 'safe') {
-      colorFondo = '#EAF4EC';
-      colorBadge = '#4E8B63';
-      textoEstado = 'No se detecta manipulación clara';
-    }
+    if (data.status === 'safe') {
+    colorFondo = '#EAF4EC';
+    colorBadge = '#4E8B63';
+    textoEstado = 'Relación saludable';
+ 
+    } else if (data.status === 'neutral') {
+    colorFondo = '#F5F0E8';
+    colorBadge = '#C47A14';
+    textoEstado = 'Señales poco claras';
+
+    } else if (data.status === 'warning_soft') {
+    colorFondo = '#FFF4E5';
+    colorBadge = '#D48A2C';
+    textoEstado = 'Incomodidad emocional';
+
+    } else if (data.status === 'warning') {
+    colorFondo = '#F8E6E4';
+    colorBadge = '#C4414A';
+    textoEstado = 'Manipulación emocional';
+
+    } else if (data.status === 'high_warning') {
+    colorFondo = '#F5D6D6';
+    colorBadge = '#A83232';
+    textoEstado = 'Manipulación clara';
+
+    } else if (data.status === 'toxic') {
+    colorFondo = '#F2CACA';
+    colorBadge = '#7A1F1F';
+    textoEstado = 'Riesgo emocional alto'; 
+}
 
     resultadoAnalisis.innerHTML = `
       <div style="background:${colorFondo}; border:1px solid rgba(26,23,20,0.12); border-radius:16px; padding:1.4rem;">
