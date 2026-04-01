@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         status: "neutral",
         title: "Texto inválido",
         message: "No se recibió un texto válido para analizar.",
-        recommendation: "Pega una conversación o mensaje antes de analizar."
+        recommendation: "Pega una conversación antes de analizar."
       });
     }
 
@@ -46,21 +46,11 @@ Habla con claridad, empatía y firmeza.
 
 Responde SOLO con JSON válido en este formato exacto:
 {
-  "status": "warning",
-  "title": "Posibles señales de manipulación emocional",
+  "status": "warning | neutral | safe",
+  "title": "título breve",
   "message": "explicación breve y clara",
   "recommendation": "recomendación emocional concreta"
 }
-
-Si no hay señales claras, usa:
-{
-  "status": "safe",
-  "title": "No se detecta manipulación clara",
-  "message": "explicación breve y clara",
-  "recommendation": "recomendación emocional concreta"
-}
-
-Si es ambiguo, usa status "neutral".
 
 Texto:
 """${text}"""
@@ -85,7 +75,7 @@ Texto:
         status: "neutral",
         title: "Error en OpenAI",
         message: data?.error?.message || "La API devolvió un error.",
-        recommendation: "Revisa el modelo, la clave o el saldo de la cuenta."
+        recommendation: "Revisa la clave, el acceso al modelo o el saldo de tu cuenta."
       });
     }
 
