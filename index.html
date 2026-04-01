@@ -1270,14 +1270,121 @@ function calcTest() {
 
 <script>
 const MAX_FREE = 3;
+const AMAZON_BOOK_URL = "https://www.amazon.com/dp/B0FN6P4R7C";
 
 function getUsage() {
-  return parseInt(localStorage.getItem("usage_count") || "0");
+  return parseInt(localStorage.getItem("usage_count") || "0", 10);
 }
 
 function increaseUsage() {
   const current = getUsage();
-  localStorage.setItem("usage_count", current + 1);
+  localStorage.setItem("usage_count", String(current + 1));
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderSimpleCard(html) {
+  return `
+    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.1rem 1.2rem;">
+      ${html}
+    </div>
+  `;
+}
+
+function renderLimitMessage() {
+  return `
+    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
+      <h3 style="color:#9E5235; margin:0 0 .5rem; font-family:'Playfair Display', serif;">Has llegado al límite gratuito</h3>
+      <p style="color:#6B6460; margin:0 0 .8rem;">Ya usaste tus análisis gratuitos.</p>
+      <p style="color:#1A1714; margin:0 0 1rem; line-height:1.7;">
+        Si quieres seguir entendiendo lo que estás viviendo, este libro puede ayudarte a ver con claridad lo que hoy te confunde.
+      </p>
+      <a href="${AMAZON_BOOK_URL}"
+         target="_blank"
+         rel="noopener"
+         style="display:inline-block; margin-top:.25rem; background:#9E5235; color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none;">
+        Ver el libro en Amazon
+      </a>
+    </div>
+  `;
+}
+
+function getStatusStyles(status) {
+  switch (status) {
+    case 'safe':
+      return {
+        background: '#EAF4EC',
+        badge: '#4E8B63',
+        label: 'Relación saludable'
+      };
+    case 'neutral':
+      return {
+        background: '#F5F0E8',
+        badge: '#C47A14',
+        label: 'Señales poco claras'
+      };
+    case 'warning_soft':
+      return {
+        background: '#FFF4E5',
+        badge: '#D48A2C',
+        label: 'Incomodidad emocional'
+      };
+    case 'warning':
+      return {
+        background: '#F8E6E4',
+        badge: '#C4414A',
+        label: 'Manipulación emocional'
+      };
+    case 'high_warning':
+      return {
+        background: '#F5D6D6',
+        badge: '#A83232',
+        label: 'Manipulación clara'
+      };
+    case 'toxic':
+      return {
+        background: '#F2CACA',
+        badge: '#7A1F1F',
+        label: 'Riesgo emocional alto'
+      };
+    default:
+      return {
+        background: '#F5F0E8',
+        badge: '#C47A14',
+        label: 'Resultado orientativo'
+      };
+  }
+}
+
+function renderSuccessResult(data) {
+  const styles = getStatusStyles(data.status);
+
+  return `
+    <div style="background:${styles.background}; border:1px solid rgba(26,23,20,0.12); border-radius:16px; padding:1.4rem;">
+      <div style="display:inline-block; background:${styles.badge}; color:white; padding:0.35rem 0.8rem; border-radius:999px; font-size:0.75rem; margin-bottom:1rem;">
+        ${escapeHtml(styles.label)}
+      </div>
+      <h3 style="margin:0 0 0.8rem; font-family:'Playfair Display', serif; color:#1A1714; font-size:1.35rem;">
+        ${escapeHtml(data.title || 'Resultado del análisis')}
+      </h3>
+      <p style="margin:0 0 0.8rem; color:#6B6460; line-height:1.7; white-space:pre-line;">
+        ${escapeHtml(data.message || '')}
+      </p>
+      <p style="margin:0; color:#1A1714; font-weight:500; line-height:1.7; white-space:pre-line;">
+        ${escapeHtml(data.recommendation || '')}
+      </p>
+      <p style="margin-top:1rem; font-size:0.75rem; color:#6B6460;">
+        Este análisis es orientativo y no reemplaza apoyo psicológico o profesional.
+      </p>
+    </div>
+  `;
 }
 
 async function analizarConversacion() {
@@ -1286,47 +1393,25 @@ async function analizarConversacion() {
   const resultadoAnalisis = document.getElementById('resultadoAnalisis');
 
   const usage = getUsage();
-
   if (usage >= MAX_FREE) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
-        <h3 style="color:#9E5235; margin-bottom:0.5rem;">Has llegado al límite gratuito</h3>
-        <p style="color:#6B6460; margin-bottom:0.8rem;">
-          Ya usaste tus análisis gratuitos.
-        </p>
-        <p style="color:#1A1714; margin-bottom:1rem;">
-          Si quieres seguir entendiendo lo que estás viviendo, este libro puede ayudarte a ver con claridad lo que hoy te confunde.
-        </p>
-        <a href="https://www.amazon.com/dp/B0FN6P4R7C"
-           target="_blank"
-           rel="noopener"
-           style="display:inline-block; margin-top:0.5rem; background:#9E5235; color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none;">
-          Ver el libro
-        </a>
-      </div>
-    `;
+    resultadoAnalisis.innerHTML = renderLimitMessage();
     return;
   }
 
   const text = dialogInput.value.trim();
-
   if (!text) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-        <p style="margin:0; color:#6B6460;">Por favor, pega una conversación para analizar.</p>
-      </div>
-    `;
+    resultadoAnalisis.innerHTML = renderSimpleCard(
+      '<p style="margin:0; color:#6B6460;">Por favor, pega una conversación para analizar.</p>'
+    );
     return;
   }
 
   analyzeBtn.disabled = true;
   analyzeBtn.textContent = 'Analizando...';
 
-  resultadoAnalisis.innerHTML = `
-    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-      <p style="margin:0; color:#6B6460;">Analizando conversación...</p>
-    </div>
-  `;
+  resultadoAnalisis.innerHTML = renderSimpleCard(
+    '<p style="margin:0; color:#6B6460;">Analizando conversación...</p>'
+  );
 
   try {
     const response = await fetch('/api/analyze', {
@@ -1343,82 +1428,26 @@ async function analizarConversacion() {
       resultadoAnalisis.innerHTML = `
         <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.4rem;">
           <h3 style="margin:0 0 .8rem; font-family:'Playfair Display', serif; color:#1A1714;">
-            ${data.title || 'Error'}
+            ${escapeHtml(data.title || 'Error')}
           </h3>
           <p style="margin:0 0 .8rem; color:#6B6460; white-space:pre-line;">
-            ${data.message || data.error || 'Ocurrió un error al analizar el texto.'}
+            ${escapeHtml(data.message || data.error || 'Ocurrió un error al analizar el texto.')}
           </p>
           <p style="margin:0; color:#1A1714; font-weight:500; white-space:pre-line;">
-            ${data.recommendation || ''}
+            ${escapeHtml(data.recommendation || '')}
           </p>
         </div>
       `;
       return;
     }
 
-    // Solo cuenta si salió bien
     increaseUsage();
-
-    let colorFondo = '#F5F0E8';
-    let colorBadge = '#C47A14';
-    let textoEstado = 'Resultado orientativo';
-
-    if (data.status === 'safe') {
-      colorFondo = '#EAF4EC';
-      colorBadge = '#4E8B63';
-      textoEstado = 'Relación saludable';
-
-    } else if (data.status === 'neutral') {
-      colorFondo = '#F5F0E8';
-      colorBadge = '#C47A14';
-      textoEstado = 'Señales poco claras';
-
-    } else if (data.status === 'warning_soft') {
-      colorFondo = '#FFF4E5';
-      colorBadge = '#D48A2C';
-      textoEstado = 'Incomodidad emocional';
-
-    } else if (data.status === 'warning') {
-      colorFondo = '#F8E6E4';
-      colorBadge = '#C4414A';
-      textoEstado = 'Manipulación emocional';
-
-    } else if (data.status === 'high_warning') {
-      colorFondo = '#F5D6D6';
-      colorBadge = '#A83232';
-      textoEstado = 'Manipulación clara';
-
-    } else if (data.status === 'toxic') {
-      colorFondo = '#F2CACA';
-      colorBadge = '#7A1F1F';
-      textoEstado = 'Riesgo emocional alto';
-    }
-
-    resultadoAnalisis.innerHTML = `
-      <div style="background:${colorFondo}; border:1px solid rgba(26,23,20,0.12); border-radius:16px; padding:1.4rem;">
-        <div style="display:inline-block; background:${colorBadge}; color:white; padding:0.35rem 0.8rem; border-radius:999px; font-size:0.75rem; margin-bottom:1rem;">
-          ${textoEstado}
-        </div>
-        <h3 style="margin:0 0 0.8rem; font-family:'Playfair Display', serif; color:#1A1714; font-size:1.35rem;">
-          ${data.title}
-        </h3>
-        <p style="margin:0 0 0.8rem; color:#6B6460; line-height:1.7; white-space:pre-line;">
-          ${data.message}
-        </p>
-        <p style="margin:0; color:#1A1714; font-weight:500; line-height:1.7; white-space:pre-line;">
-          ${data.recommendation}
-        </p>
-        <p style="margin-top:1rem; font-size:0.75rem; color:#6B6460;">
-          Este análisis es orientativo y no reemplaza apoyo psicológico o profesional.
-        </p>
-      </div>
-    `;
+    resultadoAnalisis.innerHTML = renderSuccessResult(data);
   } catch (error) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-        <p style="margin:0; color:#9E5235;">No se pudo conectar con el análisis.</p>
-      </div>
-    `;
+    resultadoAnalisis.innerHTML = renderSimpleCard(
+      '<p style="margin:0; color:#9E5235;">No se pudo conectar con el análisis.</p>'
+    );
+    console.error('Error al conectar con el análisis:', error);
   } finally {
     analyzeBtn.disabled = false;
     analyzeBtn.textContent = 'Analizar mi conversación →';
