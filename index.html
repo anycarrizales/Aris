@@ -1305,13 +1305,21 @@ async function analizarConversacion() {
     const data = await response.json();
 
     if (!response.ok) {
-      resultadoAnalisis.innerHTML = `
-        <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-          <p style="margin:0; color:#9E5235;">${data.error || 'Ocurrió un error al analizar el texto.'}</p>
-        </div>
-      `;
-      return;
-    }
+  resultadoAnalisis.innerHTML = `
+    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
+      <h3 style="margin:0 0 .6rem; color:#9E5235; font-family:'Playfair Display', serif;">
+        ${data.title || 'Error'}
+      </h3>
+      <p style="margin:0 0 .6rem; color:#6B6460;">
+        ${data.message || data.error || 'Ocurrió un error al analizar el texto.'}
+      </p>
+      <strong style="color:#1A1714;">
+        ${data.recommendation || ''}
+      </strong>
+    </div>
+  `;
+  return;
+}
 
     let colorFondo = '#F5F0E8';
     let colorBadge = '#C47A14';
