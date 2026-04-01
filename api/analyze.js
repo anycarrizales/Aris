@@ -31,7 +31,6 @@ export default async function handler(req, res) {
     }
 
     const prompt = `
-const prompt = `
 Eres un analista de comunicación emocional con enfoque en relaciones y vas a analizar lo que le dijo su pareja a esta persona.
 
 Clasifica el siguiente texto en UNO de estos 6 niveles, según las señales presentes:
@@ -143,7 +142,7 @@ Las relaciones sanas no son perfectas, pero sí seguras emocionalmente.`,
         title: "Hay señales ambiguas que conviene observar",
         message: `Lo que describes no es concluyente por sí solo, pero sí puede generar confusión emocional.
 
-A veces la manipulación no empieza de forma evidente. Puede disfrazarse de cariño, de preocupación o de un simple “malentendido”, y por eso cuesta tanto reconocerla al principio.
+A veces la manipulación no empieza de forma evidente. Puede disfrazarse de cariño, de preocupación o de un simple malentendido, y por eso cuesta tanto reconocerla al principio.
 
 Tu incomodidad no es exagerada solo porque todavía no tengas todas las respuestas.`,
         recommendation: `Observa si este tipo de mensajes o actitudes se repiten y si te hacen dudar de tu percepción. Si quieres entender mejor estos primeros indicios, en mi libro Manual para reconocer un Idiota te ayudo a ver lo que al inicio cuesta nombrar.`
@@ -187,7 +186,7 @@ Nada de eso es casual.`,
         title: "Hay señales de una dinámica emocionalmente dañina",
         message: `Lo que compartes muestra señales de una dinámica emocionalmente dañina.
 
-Cuando aparece el miedo, la presión, la coerción o la sensación de no poder decir “no” con seguridad, ya no estamos hablando solo de diferencias o conflictos normales dentro de una relación. Estamos frente a algo que puede afectar profundamente tu bienestar emocional.
+Cuando aparece el miedo, la presión, la coerción o la sensación de no poder decir "no" con seguridad, ya no estamos hablando solo de diferencias o conflictos normales dentro de una relación. Estamos frente a algo que puede afectar profundamente tu bienestar emocional.
 
 Tu cuerpo suele notarlo antes que tu mente. Por eso la incomodidad importa.`,
         recommendation: `No necesitas tener pruebas perfectas para validar lo que sientes. No estás sola. Si necesitas comprender mejor lo que estás viviendo y empezar a recuperar claridad, mi libro Manual para reconocer un Idiota puede orientarte a detectar estas formas de manipulación y maltrato emocional con más precisión.`
