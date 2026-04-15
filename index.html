@@ -1268,16 +1268,87 @@ function calcTest() {
   <p style="font-size: 0.72rem;">Tu información está protegida y es confidencial.</p>
 </footer>
 
+
 <script>
 const MAX_FREE = 3;
 
-function getUsage() {
+// Códigos válidos y consultas que desbloquean
+const PREMIUM_CODES = {
+  "ARISVIP20": 20,
+  "ARISLANCZ20": 20,
+  "MANUAL20": 20
+};
+
+function getFreeUsage() {
   return parseInt(localStorage.getItem("usage_count") || "0");
 }
 
-function increaseUsage() {
-  const current = getUsage();
+function increaseFreeUsage() {
+  const current = getFreeUsage();
   localStorage.setItem("usage_count", current + 1);
+}
+
+function getPremiumCredits() {
+  return parseInt(localStorage.getItem("premium_credits") || "0");
+}
+
+function setPremiumCredits(value) {
+  localStorage.setItem("premium_credits", value);
+}
+
+function consumeCredit() {
+  const premium = getPremiumCredits();
+
+  if (premium > 0) {
+    setPremiumCredits(premium - 1);
+    return "premium";
+  }
+
+  increaseFreeUsage();
+  return "free";
+}
+
+function hasAccess() {
+  const freeUsed = getFreeUsage();
+  const premium = getPremiumCredits();
+
+  return freeUsed < MAX_FREE || premium > 0;
+}
+
+function activarCodigo() {
+  const codeInput = document.getElementById("premiumCode");
+  const resultadoAnalisis = document.getElementById("resultadoAnalisis");
+  const code = codeInput.value.trim().toUpperCase();
+
+  if (!code) {
+    resultadoAnalisis.innerHTML = `
+      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
+        <p style="margin:0; color:#6B6460;">Escribe un código para desbloquear consultas.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (PREMIUM_CODES[code]) {
+    const credits = PREMIUM_CODES[code];
+    setPremiumCredits(credits);
+
+    resultadoAnalisis.innerHTML = `
+      <div style="background:#EAF4EC; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
+        <h3 style="margin:0 0 .5rem; color:#1A1714;">Código activado</h3>
+        <p style="margin:0; color:#4E8B63;">Has desbloqueado ${credits} consultas.</p>
+      </div>
+    `;
+
+    codeInput.value = "";
+  } else {
+    resultadoAnalisis.innerHTML = `
+      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
+        <h3 style="margin:0 0 .5rem; color:#9E5235;">Código no válido</h3>
+        <p style="margin:0; color:#6B6460;">Revisa el código o escríbeme si ya realizaste el pago.</p>
+      </div>
+    `;
+  }
 }
 
 async function analizarConversacion() {
@@ -1285,22 +1356,48 @@ async function analizarConversacion() {
   const analyzeBtn = document.getElementById('analyzeBtn');
   const resultadoAnalisis = document.getElementById('resultadoAnalisis');
 
-  const usage = getUsage();
+  const freeUsed = getFreeUsage();
+  const premiumCredits = getPremiumCredits();
 
-  if (usage >= MAX_FREE) {
+  if (!hasAccess()) {
     resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
-        <h3 style="color:#9E5235; margin-bottom:0.5rem;">Has llegado al límite gratuito</h3>
-        <p style="color:#6B6460; margin-bottom:0.8rem;">Ya usaste tus análisis gratuitos.</p>
-        <p style="color:#1A1714; margin-bottom:1rem;">
-          Si quieres seguir entendiendo lo que estás viviendo, este libro puede ayudarte a ver con claridad lo que hoy te confunde.
+      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.4rem; text-align:center;">
+        <h3 style="color:#9E5235; margin-bottom:0.6rem;">Has llegado al límite gratuito</h3>
+        <p style="color:#6B6460; margin-bottom:0.8rem;">
+          Ya usaste tus 3 análisis gratuitos.
         </p>
-        <a href="https://www.amazon.com/dp/B0FN6P4R7C"
-           target="_blank"
-           rel="noopener"
-           style="display:inline-block; margin-top:0.5rem; background:#9E5235; color:white; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none;">
-          Ver el libro
-        </a>
+        <p style="color:#1A1714; margin-bottom:1rem; line-height:1.7;">
+          Si quieres seguir analizando conversaciones, puedes desbloquear 20 consultas por USD 5 o ir directo al libro.
+        </p>
+
+        <div style="display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; margin-bottom:1rem;">
+          <a href="https://paypal.me/arislancz"
+             target="_blank"
+             rel="noopener"
+             style="display:inline-block; background:#9E5235; color:white; padding:0.85rem 1.6rem; border-radius:8px; text-decoration:none; font-weight:500;">
+            Desbloquear 20 consultas por USD 5
+          </a>
+
+          <a href="https://www.amazon.com/dp/B0FN6P4R7C"
+             target="_blank"
+             rel="noopener"
+             style="display:inline-block; background:transparent; color:#1A1714; padding:0.85rem 1.6rem; border-radius:8px; text-decoration:none; font-weight:500; border:1px solid rgba(26,23,20,0.18);">
+            Ver el libro
+          </a>
+        </div>
+
+        <div style="margin-top:1rem;">
+          <input id="premiumCode"
+                 type="text"
+                 placeholder="Ingresa tu código"
+                 style="width:100%; max-width:320px; padding:0.85rem 1rem; border:1px solid rgba(26,23,20,0.12); border-radius:10px; font-size:0.95rem; margin-bottom:0.8rem;">
+          <br>
+          <button type="button"
+                  onclick="activarCodigo()"
+                  style="background:#1A1714; color:white; border:none; padding:0.8rem 1.4rem; border-radius:8px; cursor:pointer;">
+            Activar código
+          </button>
+        </div>
       </div>
     `;
     return;
@@ -1359,7 +1456,7 @@ async function analizarConversacion() {
       return;
     }
 
-    increaseUsage();
+    consumeCredit();
 
     let colorFondo = '#F5F0E8';
     let colorBadge = '#C47A14';
@@ -1391,6 +1488,9 @@ async function analizarConversacion() {
       textoEstado = 'Riesgo emocional alto';
     }
 
+    const freeRestantes = Math.max(0, MAX_FREE - getFreeUsage());
+    const premiumRestantes = getPremiumCredits();
+
     resultadoAnalisis.innerHTML = `
       <div style="background:${colorFondo}; border:1px solid rgba(26,23,20,0.12); border-radius:16px; padding:1.4rem;">
         <div style="display:inline-block; background:${colorBadge}; color:white; padding:0.35rem 0.8rem; border-radius:999px; font-size:0.75rem; margin-bottom:1rem;">
@@ -1407,6 +1507,9 @@ async function analizarConversacion() {
         </p>
         <p style="margin-top:1rem; font-size:0.75rem; color:#6B6460;">
           Este análisis es orientativo y no reemplaza apoyo psicológico o profesional.
+        </p>
+        <p style="margin-top:0.8rem; font-size:0.8rem; color:#6B6460;">
+          Consultas gratis restantes: ${freeRestantes} · Consultas premium restantes: ${premiumRestantes}
         </p>
       </div>
     `;
