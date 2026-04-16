@@ -1424,11 +1424,17 @@ async function analizarConversacion() {
   `;
 
   try {
-    const response = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
+    const response = await fetch("/api/analyze", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: input,
+    history: chatHistory,
+    firstAnalysis: !firstAnalysisDone
+  })
+})
 
     const rawText = await response.text();
 
