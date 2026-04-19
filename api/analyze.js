@@ -10,10 +10,16 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const text = body?.text?.trim();
 
-    const text = body?.message?.trim();
-    const history = body?.history || [];
-    const firstAnalysis = body?.firstAnalysis ?? true;
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({
+        status: "neutral",
+        title: "Falta configuración",
+        message: "No se encontró OPENAI_API_KEY en Vercel.",
+        recommendation: "Agrega tu clave de OpenAI en Settings > Environment Variables y vuelve a desplegar."
+      });
+    }
 
     if (!text) {
       return res.status(400).json({
@@ -23,7 +29,6 @@ export default async function handler(req, res) {
         recommendation: "Pega una conversación o un mensaje antes de analizar."
       });
     }
-
     const lowerText = text.toLowerCase();
 
     // 🚨 DETECCIÓN DE VIOLENCIA FÍSICA (PRIORIDAD MÁXIMA)
@@ -55,16 +60,7 @@ Si quieres, puedes contarme un poco más sobre lo que pasó antes o después de 
       });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({
-        status: "neutral",
-        title: "Falta configuración",
-        message: "No se encontró OPENAI_API_KEY en Vercel.",
-        recommendation: "Agrega tu clave de OpenAI."
-      });
-    }
-
-    // 🔥 MODO CHAT (DESPUÉS DEL PRIMER ANÁLISIS)
+   // 🔥 MODO CHAT (DESPUÉS DEL PRIMER ANÁLISIS)
     if (!firstAnalysis) {
       const chatPrompt = `
 Estás hablando con una persona que está intentando entender su relación.
@@ -117,25 +113,63 @@ Evita:
       });
     }
 
-    // 🔥 MODO ANÁLISIS (PRIMERA VEZ - OPTIMIZADO PARA ENGAGEMENT)
+   // 🔥 MODO ANÁLISIS (PRIMERA VEZ - OPTIMIZADO PARA ENGAGEMENT)
 
-    const prompt = `
-Eres un analista experto en relaciones y manipulación emocional.
+const prompt = `
+Eres un analista de comunicación emocional con enfoque en relaciones y vas a analizar lo que le dijo su pareja a esta persona.
 
 Tu objetivo NO es solo analizar, sino generar un pequeño impacto emocional que haga que la persona quiera seguir entendiendo lo que le pasa.
 
-Clasifica el texto en uno de estos niveles:
-safe, neutral, warning_soft, warning, high_warning, toxic
+Clasifica el siguiente texto en UNO de estos 6 niveles, según las señales presentes:
+
+safe:
+- tono respetuoso
+- no hay culpa, presión, humillación ni invalidación
+
+neutral:
+- hay incomodidad o ambigüedad, pero no señales suficientes para hablar de manipulación
+
+warning_soft:
+- minimiza emociones
+- invalida sutilmente
+- hace que la persona se explique de más
+- genera confusión leve
+
+warning:
+- culpa a la otra persona por sentir
+- contradicciones
+- exigencias injustas
+- control emocional sutil
+- manipulación emocional visible
+
+high_warning:
+- gaslighting
+- hace dudar de la memoria o de la percepción
+- hace sentir que el problema siempre es la otra persona
+- desgaste emocional fuerte
+
+toxic:
+- violencia física o agresión física de cualquier tipo
+- miedo
+- coerción
+- presión
+- sometimiento
+- amenaza
+- imposibilidad de decir "no" con seguridad
+- dinámica emocionalmente dañina
 
 Reglas:
-- Si hay invalidación → mínimo warning
-- Si hay manipulación → mínimo warning
-- Si hay desgaste emocional → high_warning
-- Si hay miedo o control → toxic
+- Si hay invalidación clara, no uses "neutral".
+- Si hay culpa, manipulación o contradicción repetida, usa mínimo "warning".
+- Si hay miedo o presión para someterse, usa "toxic".
+- Si el texto menciona golpes, empujones, bofetadas, agresión física o daño corporal, usa siempre "toxic".
+- No reduzcas el nivel por disculpas, promesas, arrepentimiento o frases como "fue sin querer" o "me ama".
+- No diagnostiques personas.
+- Responde SOLO con JSON válido.
 
-Responde SOLO JSON:
+Formato exacto:
 {
-  "level": "nivel"
+  "level": "safe | neutral | warning_soft | warning | high_warning | toxic"
 }
 
 Texto:
@@ -155,6 +189,15 @@ Texto:
     });
 
     const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(500).json({
+        status: "neutral",
+        title: "Error en OpenAI",
+        message: data?.error?.message || "La API devolvió un error.",
+        recommendation: "Revisa la clave, el acceso al modelo o el saldo de tu cuenta."
+      });
+    }
 
     const raw =
       data.output_text ||
@@ -176,55 +219,67 @@ Texto:
       safe: {
         status: "safe",
         title: "No se detecta manipulación clara",
-        message: `No hay señales claras de manipulación en lo que compartes.
+        message: `Lo que compartes no muestra señales claras de manipulación emocional.
 
-Aun así, algo importante es cómo te hace sentir esto en el tiempo, no solo este momento puntual.`,
+Aun así, observa cómo te sientes dentro de la relación: si puedes expresarte con libertad, si te sientes respetada y si hay espacio para el diálogo sin miedo.
+
+Las relaciones sanas no son perfectas, pero sí seguras emocionalmente.`,
         recommendation: `Si quieres, puedes contarme un poco más del contexto. A veces los patrones aparecen cuando ves la historia completa.`
       },
 
       neutral: {
         status: "neutral",
-        title: "Hay señales que pueden generar confusión",
-        message: `No es completamente claro, pero sí hay algo que puede generar duda o incomodidad.
+        title: "Hay señales ambiguas que conviene observar",
+        message: `Lo que describes no es concluyente por sí solo, pero sí puede generar confusión emocional.
 
-Y eso ya es suficiente para prestarle atención.`,
+A veces la manipulación no empieza de forma evidente. Puede disfrazarse de cariño, de preocupación o de un simple malentendido, y por eso cuesta tanto reconocerla al principio.
+
+Tu incomodidad no es exagerada solo porque todavía no tengas todas las respuestas.`,
         recommendation: `Si quieres, cuéntame qué pasó antes o después de esto. Ahí suele verse si es algo aislado o parte de un patrón.`
       },
 
       warning_soft: {
         status: "warning_soft",
-        title: "Empiezan a aparecer señales sutiles",
-        message: `Aquí ya hay pequeños indicios que pueden hacerte dudar de lo que sientes o piensas.
+        title: "Hay indicios de invalidación emocional",
+        message: `Lo que compartes puede ser una forma de invalidación emocional.
 
-Ese tipo de dinámicas no suelen ser evidentes al inicio.`,
+No siempre el maltrato comienza con violencia evidente. Muchas veces empieza haciendo que dudes de lo que sientes, de lo que recuerdas o de si tienes derecho a molestarte.
+
+Si notas que te explicas demasiado, que minimizas tu malestar o que terminas pensando que todo es culpa tuya, esa señal merece atención.`,
         recommendation: `Si esto te hace sentir confundida o te lleva a explicarte demasiado, vale la pena mirar más a fondo. Puedes contarme más si quieres.`
       },
 
       warning: {
         status: "warning",
-        title: "Hay señales de manipulación emocional",
-        message: `Aquí ya no es solo confusión.
+        title: "Se observan señales de manipulación emocional",
+        message: `Aquí ya aparecen señales de manipulación emocional.
 
-Empiezan a aparecer patrones que pueden hacerte sentir responsable de cosas que no te corresponden.`,
+Puede manifestarse como culpa, contradicciones, exigencias injustas o comportamientos que te hacen sentir responsable de todo. Estas dinámicas no siempre son escandalosas, pero sí desgastan tu seguridad, tu claridad y tu autoestima con el tiempo.
+
+No es fácil verlo cuando estás dentro de la relación.`,
         recommendation: `Si quieres, cuéntame más sobre cómo es la relación en general. A veces esto no es un caso aislado.`
       },
 
       high_warning: {
         status: "high_warning",
-        title: "La dinámica ya es preocupante",
-        message: `Lo que describes puede afectar cómo percibes la realidad dentro de la relación.
+        title: "Hay señales claras de manipulación emocional",
+        message: `Lo que describes muestra señales claras de manipulación emocional.
 
-Eso no pasa de la nada.`,
+Este tipo de dinámicas puede hacerte dudar de tu propia realidad, de tu memoria o incluso de tu valor. A veces la manipulación no grita: se instala lentamente hasta que ya no sabes si el problema es la otra persona o si eres tú.
+
+Nada de eso es casual.`,
         recommendation: `Si esto se repite, es importante entender el patrón completo. Puedes contarme más y lo vemos juntas.`
       },
 
       toxic: {
         status: "toxic",
-        title: "Hay señales de una dinámica dañina",
-        message: `Esto ya apunta a una dinámica que puede desgastarte emocionalmente.
+        title: "Hay señales de una dinámica emocionalmente dañina",
+        message: `Lo que compartes muestra señales de una dinámica emocionalmente dañina.
 
-No suele ser algo aislado.`,
-        recommendation: `Si quieres, puedes contarme más sobre lo que has vivido con esta persona. Ahí suele estar la clave para entender todo.`
+Cuando aparece el miedo, la presión, la coerción o la sensación de no poder decir "no" con seguridad, ya no estamos hablando solo de diferencias o conflictos normales dentro de una relación. Estamos frente a algo que puede afectar profundamente tu bienestar emocional.
+
+Tu cuerpo suele notarlo antes que tu mente. Por eso la incomodidad importa.`,
+        recommendation: Si quieres, puedes contarme más sobre lo que has vivido con esta persona. Ahí suele estar la clave para entender todo.`
       }
     };
 
@@ -236,8 +291,8 @@ No suele ser algo aislado.`,
     return res.status(500).json({
       status: "neutral",
       title: "Error inesperado",
-      message: error.message || "Ocurrió un error interno.",
-      recommendation: "Intenta nuevamente."
+      message: error.message || "Ocurrió un error interno al analizar el texto.",
+      recommendation: "Intenta nuevamente en unos segundos."
     });
   }
 }
