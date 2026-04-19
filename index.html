@@ -1270,271 +1270,76 @@ function calcTest() {
 
 
 <script>
-const MAX_FREE = 3;
+let mensajes = [];
+let consultas = 0;
+const LIMITE = 3;
 
-// Códigos válidos y consultas que desbloquean
-const PREMIUM_CODES = {
-  "ARISVIP20": 20,
-  "ARISLANCZ20": 20,
-  "MANUAL20": 20
-};
-
-function getFreeUsage() {
-  return parseInt(localStorage.getItem("usage_count") || "0");
+function agregarMensaje(texto, tipo) {
+  const chat = document.getElementById("chat");
+  const div = document.createElement("div");
+  div.classList.add("message", tipo);
+  div.innerText = texto;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function increaseFreeUsage() {
-  const current = getFreeUsage();
-  localStorage.setItem("usage_count", current + 1);
-}
+async function analizarTexto() {
+  const input = document.getElementById("user-input");
+  const texto = input.value.trim();
 
-function getPremiumCredits() {
-  return parseInt(localStorage.getItem("premium_credits") || "0");
-}
-
-function setPremiumCredits(value) {
-  localStorage.setItem("premium_credits", value);
-}
-
-function consumeCredit() {
-  const premium = getPremiumCredits();
-
-  if (premium > 0) {
-    setPremiumCredits(premium - 1);
-    return "premium";
-  }
-
-  increaseFreeUsage();
-  return "free";
-}
-
-function hasAccess() {
-  const freeUsed = getFreeUsage();
-  const premium = getPremiumCredits();
-
-  return freeUsed < MAX_FREE || premium > 0;
-}
-
-function activarCodigo() {
-  const codeInput = document.getElementById("premiumCode");
-  const resultadoAnalisis = document.getElementById("resultadoAnalisis");
-  const code = codeInput.value.trim().toUpperCase();
-
-  if (!code) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
-        <p style="margin:0; color:#6B6460;">Escribe un código para desbloquear consultas.</p>
-      </div>
-    `;
+  if (texto.length < 5) {
+    alert("Escribe más contexto");
     return;
   }
 
-  if (PREMIUM_CODES[code]) {
-    const credits = PREMIUM_CODES[code];
-    setPremiumCredits(credits);
-
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#EAF4EC; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
-        <h3 style="margin:0 0 .5rem; color:#1A1714;">Código activado</h3>
-        <p style="margin:0; color:#4E8B63;">Has desbloqueado ${credits} consultas.</p>
-      </div>
-    `;
-
-    codeInput.value = "";
-  } else {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.2rem; text-align:center;">
-        <h3 style="margin:0 0 .5rem; color:#9E5235;">Código no válido</h3>
-        <p style="margin:0; color:#6B6460;">Revisa el código o escríbeme si ya realizaste el pago.</p>
-      </div>
-    `;
-  }
-}
-
-async function analizarConversacion() {
-  const dialogInput = document.getElementById('dialogInput');
-  const analyzeBtn = document.getElementById('analyzeBtn');
-  const resultadoAnalisis = document.getElementById('resultadoAnalisis');
-
-  const freeUsed = getFreeUsage();
-  const premiumCredits = getPremiumCredits();
-
-  if (!hasAccess()) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.4rem; text-align:center;">
-        <h3 style="color:#9E5235; margin-bottom:0.6rem;">Has llegado al límite gratuito</h3>
-        <p style="color:#6B6460; margin-bottom:0.8rem;">
-          Ya usaste tus 3 análisis gratuitos.
-        </p>
-        <p style="color:#1A1714; margin-bottom:1rem; line-height:1.7;">
-          Si quieres seguir analizando conversaciones, puedes desbloquear 20 consultas por USD 5 o ir directo al libro.
-        </p>
-
-        <div style="display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; margin-bottom:1rem;">
-          <a href="https://paypal.me/arislancz"
-             target="_blank"
-             rel="noopener"
-             style="display:inline-block; background:#9E5235; color:white; padding:0.85rem 1.6rem; border-radius:8px; text-decoration:none; font-weight:500;">
-            Desbloquear 20 consultas por USD 5
-          </a>
-
-          <a href="https://www.amazon.com/dp/B0FN6P4R7C"
-             target="_blank"
-             rel="noopener"
-             style="display:inline-block; background:transparent; color:#1A1714; padding:0.85rem 1.6rem; border-radius:8px; text-decoration:none; font-weight:500; border:1px solid rgba(26,23,20,0.18);">
-            Ver el libro
-          </a>
-        </div>
-
-        <div style="margin-top:1rem;">
-          <input id="premiumCode"
-                 type="text"
-                 placeholder="Ingresa tu código"
-                 style="width:100%; max-width:320px; padding:0.85rem 1rem; border:1px solid rgba(26,23,20,0.12); border-radius:10px; font-size:0.95rem; margin-bottom:0.8rem;">
-          <br>
-          <button type="button"
-                  onclick="activarCodigo()"
-                  style="background:#1A1714; color:white; border:none; padding:0.8rem 1.4rem; border-radius:8px; cursor:pointer;">
-            Activar código
-          </button>
-        </div>
-      </div>
-    `;
+  if (consultas >= LIMITE) {
+    document.getElementById("paywall").style.display = "block";
     return;
   }
 
-  const text = dialogInput.value.trim();
+  agregarMensaje("Tú: " + texto, "user");
+  input.value = "";
 
-  if (!text) {
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-        <p style="margin:0; color:#6B6460;">Por favor, pega una conversación para analizar.</p>
-      </div>
-    `;
-    return;
-  }
-
-  analyzeBtn.disabled = true;
-  analyzeBtn.textContent = 'Analizando...';
-
-  resultadoAnalisis.innerHTML = `
-    <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-      <p style="margin:0; color:#6B6460;">Analizando conversación...</p>
-    </div>
-  `;
+  agregarMensaje("Analizando...", "bot");
 
   try {
-    const response = await fetch("/api/analyze", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    message: input,
-    history: chatHistory,
-    firstAnalysis: !firstAnalysisDone
-  })
-})
+    const res = await fetch("http://localhost:3000/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        text: texto,
+        history: mensajes
+      })
+    });
 
-    const rawText = await response.text();
+    const data = await res.json();
 
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      throw new Error(`La API no devolvió JSON válido: ${rawText.slice(0, 200)}`);
+    if (data.error) {
+      throw new Error(data.error);
     }
 
-    if (!response.ok) {
-      resultadoAnalisis.innerHTML = `
-        <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1.4rem;">
-          <h3 style="margin:0 0 .8rem; font-family:'Playfair Display', serif; color:#1A1714;">
-            ${data.title || 'Error'}
-          </h3>
-          <p style="margin:0 0 .8rem; color:#6B6460; white-space:pre-line;">
-            ${data.message || data.error || 'Ocurrió un error al analizar el texto.'}
-          </p>
-          <p style="margin:0; color:#1A1714; font-weight:500; white-space:pre-line;">
-            ${data.recommendation || ''}
-          </p>
-        </div>
-      `;
-      return;
-    }
+    // quitar "Analizando..."
+    const chat = document.getElementById("chat");
+    chat.removeChild(chat.lastChild);
 
-    consumeCredit();
+    agregarMensaje("Análisis: " + data.reply, "bot");
 
-    let colorFondo = '#F5F0E8';
-    let colorBadge = '#C47A14';
-    let textoEstado = 'Resultado orientativo';
+    mensajes.push({
+      user: texto,
+      bot: data.reply
+    });
 
-    if (data.status === 'safe') {
-      colorFondo = '#EAF4EC';
-      colorBadge = '#4E8B63';
-      textoEstado = 'Relación saludable';
-    } else if (data.status === 'neutral') {
-      colorFondo = '#F5F0E8';
-      colorBadge = '#C47A14';
-      textoEstado = 'Señales poco claras';
-    } else if (data.status === 'warning_soft') {
-      colorFondo = '#FFF4E5';
-      colorBadge = '#D48A2C';
-      textoEstado = 'Incomodidad emocional';
-    } else if (data.status === 'warning') {
-      colorFondo = '#F8E6E4';
-      colorBadge = '#C4414A';
-      textoEstado = 'Manipulación emocional';
-    } else if (data.status === 'high_warning') {
-      colorFondo = '#F5D6D6';
-      colorBadge = '#A83232';
-      textoEstado = 'Manipulación clara';
-    } else if (data.status === 'toxic') {
-      colorFondo = '#F2CACA';
-      colorBadge = '#7A1F1F';
-      textoEstado = 'Riesgo emocional alto';
-    }
+    consultas++;
 
-    const freeRestantes = Math.max(0, MAX_FREE - getFreeUsage());
-    const premiumRestantes = getPremiumCredits();
+  } catch (err) {
+    const chat = document.getElementById("chat");
+    chat.removeChild(chat.lastChild);
 
-    resultadoAnalisis.innerHTML = `
-      <div style="background:${colorFondo}; border:1px solid rgba(26,23,20,0.12); border-radius:16px; padding:1.4rem;">
-        <div style="display:inline-block; background:${colorBadge}; color:white; padding:0.35rem 0.8rem; border-radius:999px; font-size:0.75rem; margin-bottom:1rem;">
-          ${textoEstado}
-        </div>
-        <h3 style="margin:0 0 0.8rem; font-family:'Playfair Display', serif; color:#1A1714; font-size:1.35rem;">
-          ${data.title || 'Resultado'}
-        </h3>
-        <p style="margin:0 0 0.8rem; color:#6B6460; line-height:1.7; white-space:pre-line;">
-          ${data.message || ''}
-        </p>
-        <p style="margin:0; color:#1A1714; font-weight:500; line-height:1.7; white-space:pre-line;">
-          ${data.recommendation || ''}
-        </p>
-        <p style="margin-top:1rem; font-size:0.75rem; color:#6B6460;">
-          Este análisis es orientativo y no reemplaza apoyo psicológico o profesional.
-        </p>
-        <p style="margin-top:0.8rem; font-size:0.8rem; color:#6B6460;">
-          Consultas gratis restantes: ${freeRestantes} · Consultas premium restantes: ${premiumRestantes}
-        </p>
-      </div>
-    `;
-  } catch (error) {
-    console.error("Error en analizarConversacion:", error);
-
-    resultadoAnalisis.innerHTML = `
-      <div style="background:#fff; border:1px solid rgba(26,23,20,0.12); border-radius:14px; padding:1rem 1.1rem;">
-        <h3 style="margin:0 0 .5rem; color:#9E5235;">No se pudo completar el análisis</h3>
-        <p style="margin:0; color:#6B6460; white-space:pre-line;">${error.message}</p>
-      </div>
-    `;
-  } finally {
-    analyzeBtn.disabled = false;
-    analyzeBtn.textContent = 'Analizar mi conversación →';
+    agregarMensaje("Error al conectar con el análisis", "bot");
   }
 }
-
-document.getElementById('analyzeBtn').addEventListener('click', analizarConversacion);
 </script>
 </body>
 </html>
