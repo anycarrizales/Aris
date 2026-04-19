@@ -10,7 +10,9 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const text = body?.text?.trim();
+    const text = body?.message?.trim();
+    const history = body?.history || [];
+    const firstAnalysis = body?.firstAnalysis ?? true;
 
     if (!process.env.OPENAI_API_KEY) {
       return res.status(500).json({
@@ -115,7 +117,7 @@ Evita:
 
    // 🔥 MODO ANÁLISIS (PRIMERA VEZ - OPTIMIZADO PARA ENGAGEMENT)
 
-const prompt = `
+  const prompt = `
 Eres un analista de comunicación emocional con enfoque en relaciones y vas a analizar lo que le dijo su pareja a esta persona.
 
 Tu objetivo NO es solo analizar, sino generar un pequeño impacto emocional que haga que la persona quiera seguir entendiendo lo que le pasa.
