@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         "me dio una cachetada","me dio una bofetada",
         "me dio un golpe","me dio en la cara",
         "me lastimó","me lastimo",
-        "me agredió","me agredio"
+        "me agredió","me agredio",
         "me tiró","me tiro"
       ];
 
