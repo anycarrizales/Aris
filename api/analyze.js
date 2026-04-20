@@ -51,6 +51,7 @@ export default async function handler(req, res) {
         "me dio un golpe","me dio en la cara",
         "me lastimó","me lastimo",
         "me agredió","me agredio"
+        "me tiró","me tiro"
       ];
 
       return patrones.some(p => t.includes(p));
