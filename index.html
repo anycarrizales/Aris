@@ -1416,7 +1416,7 @@ async function analizarConversacion() {
   resultadoAnalisis.innerHTML = `<p>Analizando...</p>`;
 
   try {
-    const response = await fetch("http://localhost:3000/analyze", {
+    const response = await fetch("/api/analyze", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -1441,7 +1441,7 @@ async function analizarConversacion() {
 
     chatHistory.push({
       user: text,
-      bot: data.message
+      assistant: data.message
     });
 
     firstAnalysisDone = true;
@@ -1451,20 +1451,44 @@ async function analizarConversacion() {
     // =====================
     let textoEstado = "Resultado";
 
-    if (status === "toxic") {
-      textoEstado = "Riesgo emocional alto";
-    } else if (status === "warning") {
-      textoEstado = "Manipulación";
-    } else if (status === "safe") {
-      textoEstado = "Relación saludable";
-    }
+if (status === "toxic") {
+  textoEstado = "🚨 Riesgo emocional alto";
+} else if (status === "high_warning") {
+  textoEstado = "⚠️ Manipulación clara";
+} else if (status === "warning") {
+  textoEstado = "⚠️ Señales de manipulación";
+} else if (status === "warning_soft") {
+  textoEstado = "🔶 Algo que incomoda";
+} else if (status === "neutral") {
+  textoEstado = "🔍 Puede generar confusión";
+} else if (status === "safe") {
+  textoEstado = "✅ Relación saludable";
+}
 
-    resultadoAnalisis.innerHTML = `
-      <div>
-        <strong>${textoEstado}</strong>
-        <p>${data.message}</p>
-        <p><b>${data.recommendation || ""}</b></p>
-      </div>`;
+// Color por nivel
+const colores = {
+  toxic:        { bg: "#FDE8E8", border: "#E53E3E", texto: "#7B1111" },
+  high_warning: { bg: "#FEF0E6", border: "#DD6B20", texto: "#7B3700" },
+  warning:      { bg: "#FFFBE6", border: "#D69E2E", texto: "#7B5800" },
+  warning_soft: { bg: "#FFFBF0", border: "#E9C46A", texto: "#6B5000" },
+  neutral:      { bg: "#F0F4FF", border: "#7F9CF5", texto: "#2D3A8C" },
+  safe:         { bg: "#EAF4EC", border: "#48BB78", texto: "#1A6B33" }
+};
+
+const c = colores[status] || { bg: "#F5F5F5", border: "#CCCCCC", texto: "#333333" };
+
+resultadoAnalisis.innerHTML = `
+  <div style="
+    background: ${c.bg};
+    border-left: 4px solid ${c.border};
+    border-radius: 8px;
+    padding: 1.4rem 1.6rem;
+    color: ${c.texto};
+  ">
+    <strong style="font-size: 1rem; display: block; margin-bottom: 0.6rem;">${textoEstado}</strong>
+    <p style="margin-bottom: 0.8rem; color: #333;">${data.message}</p>
+    <p style="font-weight: 500; font-size: 0.9rem; color: ${c.texto};">${data.recommendation || ""}</p>
+  </div>`;
 
   } catch (error) {
     console.error(error);
