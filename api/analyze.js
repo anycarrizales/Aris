@@ -183,37 +183,37 @@ Texto:
         status: "safe",
         title: "No hay señales claras de daño",
         message: "Esto no muestra señales preocupantes claras.",
-        recommendation: "Observa cómo te sientes en general."
+        recommendation: "Observa cómo te sientes en general eso es lo más importante. ¿Algo más te preocupa?."
       },
       neutral: {
         status: "neutral",
         title: "Puede generar confusión",
         message: "Esto puede generar duda emocional.",
-        recommendation: "Mira el contexto completo."
+        recommendation: "Mira el contexto completo. ¿Qué más te dice?"
       },
       warning_soft: {
         status: "warning_soft",
         title: "Hay algo que incomoda",
         message: "Aquí ya aparece cierta invalidación.",
-        recommendation: "Vale la pena observarlo."
+        recommendation: "Vale la pena observarlo. ¿Crees que es culpa tuya?"
       },
       warning: {
         status: "warning",
         title: "Empiezan señales de manipulación",
         message: "Aquí ya hay señales de manipulación emocional.",
-        recommendation: "No lo ignores."
+        recommendation: "No lo ignores. No siempre hay buen intención. ¿Hay otra actitud que te causa duda?"
       },
       high_warning: {
         status: "high_warning",
         title: "Manipulación clara",
         message: "Esto puede hacerte dudar de ti misma.",
-        recommendation: "Esto no es menor."
+        recommendation: "Esto no es menor. ¿Tienes otro ejemplo?"
       },
       toxic: {
         status: "toxic",
         title: "Dinámica dañina",
         message: "Esto ya afecta tu bienestar emocional.",
-        recommendation: "Esto es serio."
+        recommendation: "Esto es serio. ¿Quieres compartir algo más conmigo?"
       }
     };
 
