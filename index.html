@@ -1394,21 +1394,107 @@ async function analizarConversacion() {
 
   // PAYWALL
   if (!hasAccess()) {
-    resultadoAnalisis.innerHTML = `
-      <div style="text-align:center;">
-        <h3>Límite alcanzado</h3>
+  resultadoAnalisis.innerHTML = `
+    <div style="
+      background: #FDF8F5;
+      border: 1px solid #E8DDD0;
+      border-radius: 16px;
+      padding: 2rem 1.8rem;
+      text-align: center;
+      max-width: 420px;
+      margin: 0 auto;
+    ">
+      <div style="
+        width: 48px; height: 48px;
+        background: #F0DACE;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.2rem;
+        font-size: 1.4rem;
+      ">🔒</div>
 
-        <a href="https://paypal.me/arislancz" target="_blank">
-          Desbloquear 20 consultas (USD 5)
-        </a>
+      <h3 style="
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        color: #1A1714;
+        margin-bottom: 0.5rem;
+      ">Has usado tus análisis gratuitos</h3>
 
-        <br><br>
+      <p style="
+        font-size: 0.88rem;
+        color: #6B6460;
+        margin-bottom: 1.6rem;
+        line-height: 1.6;
+      ">Desbloquea 20 análisis más por solo USD 5.<br>Un pago único, sin suscripción.</p>
 
-        <input id="premiumCode" placeholder="Código">
-        <button onclick="activarCodigo()">Activar</button>
-      </div>`;
-    return;
-  }
+      <a href="https://paypal.me/arislancz" target="_blank" rel="noopener" style="
+        display: block;
+        background: #C4714A;
+        color: white;
+        text-decoration: none;
+        padding: 0.9rem 1.5rem;
+        border-radius: 100px;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 500;
+        font-size: 0.95rem;
+        margin-bottom: 1.4rem;
+        transition: background 0.2s;
+      "
+      onmouseover="this.style.background='#9E5235'"
+      onmouseout="this.style.background='#C4714A'"
+      >
+        Desbloquear 20 consultas — USD 5 →
+      </a>
+
+      <div style="
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+      ">
+        <div style="flex:1; height:1px; background:#E8DDD0;"></div>
+        <span style="font-size:0.75rem; color:#6B6460;">o tengo un código</span>
+        <div style="flex:1; height:1px; background:#E8DDD0;"></div>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem;">
+        <input
+          id="premiumCode"
+          placeholder="Escribe tu código"
+          style="
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 1px solid #E8DDD0;
+            border-radius: 100px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            color: #1A1714;
+            background: white;
+            outline: none;
+          "
+        >
+        <button
+          onclick="activarCodigo()"
+          style="
+            background: #1A1714;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.3rem;
+            border-radius: 100px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+          "
+          onmouseover="this.style.background='#C4714A'"
+          onmouseout="this.style.background='#1A1714'"
+        >Activar</button>
+      </div>
+    </div>`;
+  return;
+}
 
   analyzeBtn.disabled = true;
   analyzeBtn.textContent = "Analizando...";
